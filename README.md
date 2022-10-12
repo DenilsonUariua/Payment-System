@@ -19,4 +19,11 @@ To install this application, you need to have the following installed on your ma
 - Run `npm start` to start the application
 - The application will be running on `localhost:6002`
 
-
+## Frameworks and Libraries
+- [Material UI](https://mui.com/)
+- [React](https://reactjs.org/)
+- [Express](https://expressjs.com/)
+- [MongoDB](https://www.mongodb.com/)
+- [Mongoose](https://mongoosejs.com/)
+- [React Router](https://reactrouter.com/)
+- [Formik](https://formik.org/)
