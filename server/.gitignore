@@ -5,7 +5,7 @@
 *.zip
 
 # environment variables
-.env
+# .env
 
 # e2e
 /e2e/*.js
