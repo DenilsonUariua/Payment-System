@@ -1,0 +1,19 @@
+# dependencies
+/node_modules
+/build
+/logs
+*.zip
+
+# environment variables
+.env
+
+# e2e
+/e2e/*.js
+/e2e/*.map
+
+# System Files
+.DS_Store
+Thumbs.db
+node_modules
+build
+lib
