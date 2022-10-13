@@ -11,11 +11,10 @@ import Avatar from "@mui/material/Avatar";
 import Button from "@mui/material/Button";
 import Tooltip from "@mui/material/Tooltip";
 import MenuItem from "@mui/material/MenuItem";
-import AdbIcon from "@mui/icons-material/Adb";
 import Logo from "../../assets/icon.png";
 import { Link } from "react-router-dom";
 
-const pages = ["Products", "Pricing", "signin", "signup"];
+const pages = ["products", "pricing", "signin", "signup"];
 const settings = ["Profile", "Account", "Dashboard", "Logout"];
 
 const Navbar = () => {
