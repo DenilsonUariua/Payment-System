@@ -13,7 +13,7 @@ import { Formik, Form } from "formik";
 import { userModel } from "./models/userModel";
 import axios from "axios";
 // get api url
-const { REACT_APP_API_URL } = process.env;
+const { REACT_APP_AUTH_API_URL } = process.env;
 
 function Copyright(props) {
   return (
@@ -39,8 +39,8 @@ export default function SignIn() {
   useEffect(() => {
     // check if user is logged in
     axios
-      .get(`${REACT_APP_API_URL}/login`, {
-        withCredentials: true
+      .get(`${REACT_APP_AUTH_API_URL}/login`, {
+        withCredentials: true,
       })
       .then((res) => {
         console.log(res);
@@ -56,7 +56,7 @@ export default function SignIn() {
         component="main"
         maxWidth="xs"
         style={{
-          boxShadow: "0 0 16px 0 rgba(0,0,0,0.7)"
+          boxShadow: "0 0 16px 0 rgba(0,0,0,0.7)",
         }}
       >
         <CssBaseline />
@@ -65,7 +65,7 @@ export default function SignIn() {
             marginTop: 8,
             display: "flex",
             flexDirection: "column",
-            alignItems: "center"
+            alignItems: "center",
           }}
         >
           <Avatar sx={{ m: 1, bgcolor: "secondary.main" }}></Avatar>
@@ -87,7 +87,7 @@ export default function SignIn() {
             }}
             onSubmit={(values, { setSubmitting }) => {
               axios
-                .post(`${REACT_APP_API_URL}/signin`, values)
+                .post(`${REACT_APP_AUTH_API_URL}/signin`, values)
                 .then((res) => {
                   console.log(res);
                   setSubmitting(false);
@@ -105,7 +105,7 @@ export default function SignIn() {
               handleChange,
               handleBlur,
               handleSubmit,
-              isSubmitting
+              isSubmitting,
               /* and other goodies */
             }) => (
               <Form>
