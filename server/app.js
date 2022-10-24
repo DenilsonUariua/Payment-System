@@ -1,36 +1,28 @@
+require("dotenv").config();
+
 var express = require("express");
 var bodyParser = require("body-parser");
 var cookieParser = require("cookie-parser");
 var session = require("express-session");
 var morgan = require("morgan");
 var User = require("./models/User");
+const cors = require("cors");
+var http = require("http");
+// import express from "express";
+const { createServer } = require("http");
+const { Server } = require("socket.io");
 
-var app = express();
-
-// set our application port
-app.set("port", 4000);
-
-// set morgan to log info about our requests for development use.
-app.use(morgan("dev"));
-
-// initialize body-parser to parse incoming parameters requests to req.body
-app.use(bodyParser.urlencoded({ extended: true }));
-
-// initialize cookie-parser to allow us access the cookies stored in the browser.
-app.use(cookieParser());
-
-// initialize express-session to allow us track the logged-in user across sessions.
+const app = express();
 app.use(
-  session({
-    key: "user_sid",
-    secret: "somerandonstuffs",
-    resave: false,
-    saveUninitialized: false,
-    cookie: {
-      expires: 600000,
-    },
+  cors({
+    origin: ["http://localhost:3000"],
+    methods: ["GET,HEAD,PUT,PATCH,POST,DELETE"],
+    credentials: true,
   })
 );
+const httpServer = createServer(app);
+
+app.use(cookieParser());
 
 // This middleware will check if user's cookie is still saved in browser and user is not set, then automatically log the user out.
 // This usually happens when you stop your express server after login, your cookie still remains saved in the browser.
@@ -40,97 +32,201 @@ app.use((req, res, next) => {
   }
   next();
 });
-
+const sessionMiddleware = session({
+  key: "user_sid",
+  secret: "somerandonstuffs",
+  resave: false,
+  saveUninitialized: false,
+  cookie: {
+    expires: 600000,
+  },
+});
+// // initialize body-parser to parse incoming parameters requests to req.body
+app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({ extended: true }));
+app.use(sessionMiddleware);
+app.use(morgan("dev"));
 // middleware function to check for logged-in users
 var sessionChecker = (req, res, next) => {
+  console.log("sessionChecker", req.session.user);
   if (req.session.user && req.cookies.user_sid) {
     res.redirect("/dashboard");
   } else {
     next();
   }
 };
+app.post("/login", sessionChecker, async (req, res) => {
+  console.log("Login", req.body);
+  var email = req.body.email,
+    password = req.body.password;
 
-// route for Home-Page
-app.get("/", sessionChecker, (req, res) => {
-  res.redirect("/login");
+  try {
+    var user = await User.findOne({ email: email }).exec();
+    if (!user) {
+      res.status(401).send("User not found");
+    }
+    user.comparePassword(password, (error, match) => {
+      if (!match) {
+        return res.send("Incorrect password");
+      } else {
+        req.session.user = user;
+        return res.status(200).send(`Welcome ${user.firstName}`);
+      }
+    });
+  } catch (error) {
+    console.log(error);
+  }
+
+  req.session.authenticated = true;
+  // res.status(200).send("ok");
+  console.log("req.session", req.session);
 });
-
-// route for user signup
 app
   .route("/signup")
   .get(sessionChecker, (req, res) => {
     res.sendFile(__dirname + "/public/signup.html");
   })
   .post((req, res) => {
-
-    var user = new User({
-      username: req.body.username,
+    let user = new User({
+      firstName: req.body.firstName,
+      lastName: req.body.lastName,
       email: req.body.email,
-      password:req.body.password,
+      password: req.body.password,
     });
-    user.save((err, docs) => {
+    user.save(async (err, docs) => {
       if (err) {
-        res.redirect("/signup");
+        console.log("Error: ", err);
+        res.status(500).send("Error registering new user please try again.");
       } else {
-          console.log(docs)
+        console.log("Success: ", docs);
         req.session.user = docs;
-        res.redirect("/dashboard");
+        res.status(200).send(`Welcome ${docs.firstName}`);
       }
     });
   });
+const io = new Server(httpServer, {
+  cors: {
+    origin: "http://localhost:3000",
+    methods: ["GET", "POST"],
+  },
+});
 
-// route for user Login
-app
-  .route("/login")
-  .get(sessionChecker, (req, res) => {
-    res.sendFile(__dirname + "/public/login.html");
-  })
-  .post(async (req, res) => {
-    var username = req.body.username,
-      password = req.body.password;
+// convert a connect middleware to a Socket.IO middleware
+const wrap = (middleware) => (socket, next) =>
+  middleware(socket.request, {}, next);
 
-      try {
-        var user = await User.findOne({ username: username }).exec();
-        if(!user) {
-            res.redirect("/login");
-        }
-        user.comparePassword(password, (error, match) => {
-            if(!match) {
-              res.redirect("/login");
-            }
-        });
-        req.session.user = user;
-        res.redirect("/dashboard");
-    } catch (error) {
-      console.log(error)
-    }
-  });
+io.use(wrap(sessionMiddleware));
 
-// route for user's dashboard
-app.get("/dashboard", (req, res) => {
-  if (req.session.user && req.cookies.user_sid) {
-    res.sendFile(__dirname + "/public/dashboard.html");
+// only allow authenticated users
+io.use((socket, next) => {
+  const session = socket.request.session;
+  if (session && session.authenticated) {
+    next();
   } else {
-    res.redirect("/login");
+    next(new Error("unauthorized"));
   }
 });
 
-// route for user logout
-app.get("/logout", (req, res) => {
-  if (req.session.user && req.cookies.user_sid) {
-    res.clearCookie("user_sid");
-    res.redirect("/");
-  } else {
-    res.redirect("/login");
-  }
+io.on("connection", (socket) => {
+  console.log(socket.request.session);
 });
+// var app = express();
+const { PORT } = process.env;
 
-// route for handling 404 requests(unavailable routes)
-app.use(function (req, res, next) {
-  res.status(404).send("Sorry can't find that!");
+// // set our application port
+
+// // set morgan to log info about our requests for development use.
+// app.use(morgan("dev"));
+
+// // initialize cookie-parser to allow us access the cookies stored in the browser.
+
+// // initialize express-session to allow us track the logged-in user across sessions.
+// app.use(
+//   session({
+//     key: "user_sid",
+//     secret: "somerandonstuffs",
+//     resave: false,
+//     saveUninitialized: false,
+//     cookie: {
+//       expires: 600000,
+//     },
+//   })
+// );
+
+// // route for Home-Page
+// app.get("/", sessionChecker, (req, res) => {
+//   res.redirect("/login");
+// });
+
+// // route for user signup
+
+// // route for user Login
+// app
+//   .route("/login")
+//   .get(sessionChecker, (req, res) => {
+//     res.sendFile(__dirname + "/public/login.html");
+//   })
+//   .post(async (req, res) => {
+//     console.log("Login", req.body);
+//     io.on("connection", (socket) => {
+//       console.log("a user connected");
+//     });
+//     var email = req.body.email,
+//       password = req.body.password;
+
+//     try {
+//       var user = await User.findOne({ email: email }).exec();
+//       if (!user) {
+//         res.status(401).send("User not found");
+//       }
+//       user.comparePassword(password, (error, match) => {
+//         if (!match) {
+//           res.send("Incorrect password");
+//         }
+//       });
+//       req.session.user = user;
+//       res.status(200).send(`Welcome ${user.firstName}`);
+//     } catch (error) {
+//       console.log(error);
+//     }
+//   });
+
+// // route for user's dashboard
+// app.get("/dashboard", (req, res) => {
+//   if (req.session.user && req.cookies.user_sid) {
+//     res.sendFile(__dirname + "/public/dashboard.html");
+//   } else {
+//     res.redirect("/login");
+//   }
+// });
+
+// // route for user logout
+// app.get("/logout", (req, res) => {
+//   if (req.session.user && req.cookies.user_sid) {
+//     res.clearCookie("user_sid");
+//     res.redirect("/");
+//   } else {
+//     res.redirect("/login");
+//   }
+// });
+
+// // route for handling 404 requests(unavailable routes)
+// app.use(function (req, res, next) {
+//   res.status(404).send("Sorry can't find that!");
+// });
+
+// const secureServer = http.createServer(app);
+// const io = new Server(secureServer, {
+//   cors: {
+//     origin: "http://localhost:3000",
+//     methods: ["GET", "POST"],
+//   },
+// });
+
+// io.on("connection", (socket) => {
+//   console.log("a user connected");
+// });
+
+httpServer.listen(PORT, () => {
+  console.log(`Server running on port ${PORT}`);
 });
-
-// start the express server
-app.listen(app.get("port"), () =>
-  console.log(`App started on port ${app.get("port")}`.green)
-);

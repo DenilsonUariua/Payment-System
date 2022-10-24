@@ -14,9 +14,14 @@ import { createTheme, ThemeProvider } from "@mui/material/styles";
 import { Link } from "react-router-dom";
 import { Formik, Form } from "formik";
 import { userModel } from "./models/userModel";
+// import useNavigate from react router dom
+import { useNavigate } from "react-router-dom";
 import axios from "axios";
-// get api url
-const { REACT_APP_API_URL } = process.env;
+
+// socket io
+import { io } from "socket.io-client";
+const { REACT_APP_AUTH_API_URL } = process.env;
+const socket = io(REACT_APP_AUTH_API_URL);
 
 function Copyright(props) {
   return (
@@ -36,13 +41,15 @@ function Copyright(props) {
 const theme = createTheme();
 
 export default function SignUp() {
+  // use navigate from react router dom
+  const navigate = useNavigate();
   return (
     <ThemeProvider theme={theme}>
       <Container
         component="main"
         maxWidth="xs"
         style={{
-          boxShadow: "0 0 16px 0 rgba(0,0,0,0.7)"
+          boxShadow: "0 0 16px 0 rgba(0,0,0,0.7)",
         }}
       >
         <CssBaseline />
@@ -51,7 +58,7 @@ export default function SignUp() {
             marginTop: 8,
             display: "flex",
             flexDirection: "column",
-            alignItems: "center"
+            alignItems: "center",
           }}
         >
           <Avatar sx={{ m: 1, bgcolor: "secondary.main" }}>
@@ -76,13 +83,15 @@ export default function SignUp() {
             }}
             onSubmit={(values, { setSubmitting }) => {
               // submit data to api
+              console.log("values: ", values);
               axios
-                .post(`${REACT_APP_API_URL}/register`, values)
+                .post(`${REACT_APP_AUTH_API_URL}/signup`, values)
                 .then((res) => {
                   const { data } = res;
-                  console.log("Response: ", res);
                   // redirect to login page
-                  window.location.href = `${data}`;
+                  console.log("data", data);
+                  // pass data to login page
+                  navigate("/dashboard", { state: { data } });
                 })
                 .catch((err) => {
                   console.log("Error: ", err);
@@ -97,7 +106,7 @@ export default function SignUp() {
               handleChange,
               handleBlur,
               handleSubmit,
-              isSubmitting
+              isSubmitting,
               /* and other goodies */
             }) => (
               <Form onSubmit={handleSubmit}>

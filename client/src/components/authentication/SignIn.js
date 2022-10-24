@@ -11,6 +11,7 @@ import Container from "@mui/material/Container";
 import { createTheme, ThemeProvider } from "@mui/material/styles";
 import { Formik, Form } from "formik";
 import { userModel } from "./models/userModel";
+import { useNavigate } from "react-router-dom";
 import axios from "axios";
 // get api url
 const { REACT_APP_AUTH_API_URL } = process.env;
@@ -36,18 +37,22 @@ function Copyright(props) {
 const theme = createTheme();
 
 export default function SignIn() {
+  const navigate = useNavigate();
   useEffect(() => {
     // check if user is logged in
+    setTimeout(() => {
+
     axios
       .get(`${REACT_APP_AUTH_API_URL}/login`, {
         withCredentials: true,
       })
       .then((res) => {
-        console.log(res);
+        console.log("Resosaon", res);
       })
       .catch((err) => {
-        console.log(err);
+        console.log("Errir", err);
       });
+    }, 1000);
   }, []);
 
   return (
@@ -87,10 +92,11 @@ export default function SignIn() {
             }}
             onSubmit={(values, { setSubmitting }) => {
               axios
-                .post(`${REACT_APP_AUTH_API_URL}/signin`, values)
+                .post(`${REACT_APP_AUTH_API_URL}/login`, values)
                 .then((res) => {
                   console.log(res);
                   setSubmitting(false);
+                  navigate("/dashboard");
                 })
                 .catch((err) => {
                   console.log(err);
@@ -143,7 +149,7 @@ export default function SignIn() {
                 >
                   Sign In
                 </Button>
-                {console.log(values)}
+                {/* {console.log(values)} */}
               </Form>
             )}
           </Formik>

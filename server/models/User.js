@@ -3,7 +3,7 @@ const mongoose = require("mongoose");
 const bcrypt = require("bcrypt");
 const { MONGODB_URI } = process.env;
 
-console.log('Uri', MONGODB_URI);
+console.log("Uri", MONGODB_URI);
 
 mongoose.connect(MONGODB_URI, {
   useNewUrlParser: true,
@@ -11,11 +11,8 @@ mongoose.connect(MONGODB_URI, {
 });
 
 const userSchema = mongoose.Schema({
-  username: {
-    type: String,
-    unique: true,
-    required: true,
-  },
+  firstName: String,
+  lastName: String,
   email: {
     type: String,
     unique: true,
@@ -24,6 +21,11 @@ const userSchema = mongoose.Schema({
   password: {
     type: String,
     required: true,
+  },
+  type: {
+    type: String,
+    enum: ["Buyer", "Seller"],
+    default: "Buyer",
   },
 });
 
