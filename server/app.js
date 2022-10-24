@@ -6,18 +6,28 @@ var cookieParser = require("cookie-parser");
 var session = require("express-session");
 var morgan = require("morgan");
 var User = require("./models/User");
+var Product = require("./models/Product");
 const cors = require("cors");
 var http = require("http");
-// import express from "express";
 const { createServer } = require("http");
 const { Server } = require("socket.io");
+const { PORT } = process.env;
 
+const sessionMiddleware = session({
+  key: "user_sid",
+  secret: "somerandonstuffs",
+  resave: false,
+  saveUninitialized: false,
+  cookie: {
+    expires: 600000
+  }
+});
 const app = express();
 app.use(
   cors({
     origin: ["http://localhost:3000"],
     methods: ["GET,HEAD,PUT,PATCH,POST,DELETE"],
-    credentials: true,
+    credentials: true
   })
 );
 const httpServer = createServer(app);
@@ -32,32 +42,27 @@ app.use((req, res, next) => {
   }
   next();
 });
-const sessionMiddleware = session({
-  key: "user_sid",
-  secret: "somerandonstuffs",
-  resave: false,
-  saveUninitialized: false,
-  cookie: {
-    expires: 600000,
-  },
-});
+
 // // initialize body-parser to parse incoming parameters requests to req.body
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(sessionMiddleware);
 app.use(morgan("dev"));
 // middleware function to check for logged-in users
-var sessionChecker = (req, res, next) => {
+const sessionChecker = (req, res, next) => {
   console.log("sessionChecker", req.session.user);
-  if (req.session.user && req.cookies.user_sid) {
-    res.redirect("/dashboard");
+  if (req.session.user) {
+    res.send("/dashboard", { user: req.session.user });
   } else {
     next();
   }
 };
+app.get("/login", sessionChecker, (req, res) => {
+  res.send("/login");
+});
+
 app.post("/login", sessionChecker, async (req, res) => {
-  console.log("Login", req.body);
-  var email = req.body.email,
+  let email = req.body.email,
     password = req.body.password;
 
   try {
@@ -67,19 +72,20 @@ app.post("/login", sessionChecker, async (req, res) => {
     }
     user.comparePassword(password, (error, match) => {
       if (!match) {
-        return res.send("Incorrect password");
+        return res.status(401).send("Wrong Password");
       } else {
         req.session.user = user;
-        return res.status(200).send(`Welcome ${user.firstName}`);
+        req.session.authenticated = true;
+        return res.status(200).send(user);
       }
     });
   } catch (error) {
     console.log(error);
   }
 
-  req.session.authenticated = true;
   // res.status(200).send("ok");
   console.log("req.session", req.session);
+  await req.session.save();
 });
 app
   .route("/signup")
@@ -91,7 +97,7 @@ app
       firstName: req.body.firstName,
       lastName: req.body.lastName,
       email: req.body.email,
-      password: req.body.password,
+      password: req.body.password
     });
     user.save(async (err, docs) => {
       if (err) {
@@ -100,15 +106,51 @@ app
       } else {
         console.log("Success: ", docs);
         req.session.user = docs;
-        res.status(200).send(`Welcome ${docs.firstName}`);
+        res.status(200).send(docs);
       }
     });
   });
+
+app.route("/products").get((req, res) => {
+  Product.find({}, (err, docs) => {
+    if (err) {
+      console.log("Error: ", err);
+      res.status(500).send("Error fetching products");
+    } else {
+      console.log("Success: ", docs);
+      res.status(200).send(docs);
+    }
+  });
+});
+
+app.route("/product").post((req, res) => {
+  console.log("req.body", req.body);
+  let product = new Product({
+    name: req.body.name,
+    price: req.body.price,
+    description: req.body.description,
+    image: req.body.image,
+    sellerId: "63557d144fd226230c591153"
+  });
+  product.save(async (err, docs) => {
+    if (err) {
+      console.log("Error: ", err);
+      res.status(500).send("Error registering new product please try again.");
+    } else {
+      console.log("Success: ", docs);
+      res.status(200).send(docs);
+    }
+  });
+});
+
 const io = new Server(httpServer, {
   cors: {
     origin: "http://localhost:3000",
-    methods: ["GET", "POST"],
-  },
+    methods: ["GET", "POST"]
+  }
+});
+httpServer.listen(PORT, () => {
+  console.log(`Server running on port ${PORT}`);
 });
 
 // convert a connect middleware to a Socket.IO middleware
@@ -128,10 +170,9 @@ io.use((socket, next) => {
 });
 
 io.on("connection", (socket) => {
-  console.log(socket.request.session);
+  console.log("Connected", socket.request.session);
 });
 // var app = express();
-const { PORT } = process.env;
 
 // // set our application port
 
@@ -226,7 +267,3 @@ const { PORT } = process.env;
 // io.on("connection", (socket) => {
 //   console.log("a user connected");
 // });
-
-httpServer.listen(PORT, () => {
-  console.log(`Server running on port ${PORT}`);
-});

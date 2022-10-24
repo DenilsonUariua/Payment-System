@@ -38,23 +38,7 @@ const theme = createTheme();
 
 export default function SignIn() {
   const navigate = useNavigate();
-  useEffect(() => {
-    // check if user is logged in
-    setTimeout(() => {
-
-    axios
-      .get(`${REACT_APP_AUTH_API_URL}/login`, {
-        withCredentials: true,
-      })
-      .then((res) => {
-        console.log("Resosaon", res);
-      })
-      .catch((err) => {
-        console.log("Errir", err);
-      });
-    }, 1000);
-  }, []);
-
+ 
   return (
     <ThemeProvider theme={theme}>
       <Container
@@ -73,7 +57,7 @@ export default function SignIn() {
             alignItems: "center",
           }}
         >
-          <Avatar sx={{ m: 1, bgcolor: "secondary.main" }}></Avatar>
+          <Avatar sx={{ m: 1, bgcolor: "primary.main" }}></Avatar>
           <Typography component="h1" variant="h5">
             Sign in
           </Typography>
@@ -94,9 +78,10 @@ export default function SignIn() {
               axios
                 .post(`${REACT_APP_AUTH_API_URL}/login`, values)
                 .then((res) => {
-                  console.log(res);
+                  const { data } = res;
+                  console.log(data);
                   setSubmitting(false);
-                  navigate("/dashboard");
+                  navigate("/dashboard", { state: { data } }, { replace: true });
                 })
                 .catch((err) => {
                   console.log(err);
@@ -114,7 +99,7 @@ export default function SignIn() {
               isSubmitting,
               /* and other goodies */
             }) => (
-              <Form>
+              <Form onSubmit={handleSubmit}>
                 <TextField
                   margin="normal"
                   required

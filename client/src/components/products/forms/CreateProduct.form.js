@@ -7,16 +7,19 @@ import Checkbox from "@mui/material/Checkbox";
 import Grid from "@mui/material/Grid";
 import Box from "@mui/material/Box";
 import LockOutlinedIcon from "@mui/icons-material/LockOutlined";
+import InventoryIcon from "@mui/icons-material/Inventory";
 import Typography from "@mui/material/Typography";
 import Container from "@mui/material/Container";
 import { createTheme, ThemeProvider } from "@mui/material/styles";
 // import Link from browser router
 import { Link } from "react-router-dom";
 import { Formik, Form } from "formik";
-import { userModel } from "./models/userModel";
+import { ProductModel } from "../models/Product.model";
+import { productValidationSchema } from "../validationSchemas/product.schema";
 // import useNavigate from react router dom
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
+import { EP_TEXTFIELD } from "../../../helpers/form/EP_TEXTFIELD";
 
 // socket io
 import { io } from "socket.io-client";
@@ -40,7 +43,7 @@ function Copyright(props) {
 
 const theme = createTheme();
 
-export default function SignUp() {
+export default function CreateProduct() {
   // use navigate from react router dom
   const navigate = useNavigate();
   return (
@@ -49,7 +52,7 @@ export default function SignUp() {
         component="main"
         maxWidth="xs"
         style={{
-          boxShadow: "0 0 16px 0 rgba(0,0,0,0.7)",
+          boxShadow: "0 0 16px 0 rgba(0,0,0,0.7)"
         }}
       >
         <CssBaseline />
@@ -58,45 +61,41 @@ export default function SignUp() {
             marginTop: 8,
             display: "flex",
             flexDirection: "column",
-            alignItems: "center",
+            alignItems: "center"
           }}
         >
           <Avatar sx={{ m: 1, bgcolor: "primary.main" }}>
-            <LockOutlinedIcon />
+            <InventoryIcon />
           </Avatar>
           <Typography component="h1" variant="h5">
-            Sign up
+            Create Product
           </Typography>
 
           <Formik
-            initialValues={userModel}
-            validate={(values) => {
-              const errors = {};
-              if (!values.email) {
-                errors.email = "Required";
-              } else if (
-                !/^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i.test(values.email)
-              ) {
-                errors.email = "Invalid email address";
-              }
-              return errors;
-            }}
-            onSubmit={(values, { setSubmitting }) => {
+            initialValues={ProductModel}
+            validationSchema={productValidationSchema}
+            validateOnChange={true}
+            validateOnBlur={true}
+            onSubmit={(values, actions) => {
+              actions.setSubmitting(true);
+
               // submit data to api
               console.log("values: ", values);
               axios
-                .post(`${REACT_APP_AUTH_API_URL}/signup`, values)
+                .post(`${REACT_APP_AUTH_API_URL}/product`, values)
                 .then((res) => {
                   const { data } = res;
                   // redirect to login page
                   console.log("data", data);
+                  actions.setSubmitting(false);
+                  actions.resetForm();
                   // pass data to login page
-                  navigate("/dashboard", { state: { data } });
+                  //   navigate("/dashboard", { state: { data } });
                 })
                 .catch((err) => {
                   console.log("Error: ", err);
+                  actions.setSubmitting(false);
                 });
-              setSubmitting(false);
             }}
           >
             {({
@@ -106,65 +105,54 @@ export default function SignUp() {
               handleChange,
               handleBlur,
               handleSubmit,
-              isSubmitting,
+              isSubmitting
               /* and other goodies */
             }) => (
               <Form onSubmit={handleSubmit}>
                 <Grid container spacing={2}>
-                  <Grid item xs={12} sm={6}>
-                    <TextField
-                      autoComplete="given-name"
-                      name="firstName"
-                      required
-                      fullWidth
-                      id="firstName"
-                      onChange={handleChange}
-                      onBlur={handleBlur}
-                      label="First Name"
-                      value={values.firstName}
-                      autoFocus
-                    />
-                  </Grid>
-                  <Grid item xs={12} sm={6}>
-                    <TextField
-                      required
-                      fullWidth
-                      id="lastName"
-                      label="Last Name"
-                      onChange={handleChange}
-                      onBlur={handleBlur}
-                      name="lastName"
-                      value={values.lastName}
-                      autoComplete="family-name"
-                    />
-                  </Grid>
-                  <Grid item xs={12}>
-                    <TextField
-                      required
-                      fullWidth
-                      id="email"
-                      onChange={handleChange}
-                      onBlur={handleBlur}
-                      label="Email Address"
-                      name="email"
-                      autoComplete="email"
-                      value={values.email}
-                    />
-                  </Grid>
-                  <Grid item xs={12}>
-                    <TextField
-                      required
-                      fullWidth
-                      name="password"
-                      label="Password"
-                      type="password"
-                      id="password"
-                      onChange={handleChange}
-                      onBlur={handleBlur}
-                      autoComplete="new-password"
-                      value={values.password}
-                    />
-                  </Grid>
+                  {console.log("values", values)}
+                  <EP_TEXTFIELD
+                    name="name"
+                    required={true}
+                    handleChange={handleChange}
+                    handleBlur={handleBlur}
+                    label="Product Name"
+                    errors={errors}
+                    touched={touched}
+                    value={values.name}
+                  />
+                  <EP_TEXTFIELD
+                    name="description"
+                    required={true}
+                    handleChange={handleChange}
+                    handleBlur={handleBlur}
+                    label="Description"
+                    errors={errors}
+                    touched={touched}
+                    value={values.description}
+                  />
+                  <EP_TEXTFIELD
+                    type="url"
+                    name="image"
+                    required={true}
+                    handleChange={handleChange}
+                    handleBlur={handleBlur}
+                    label="Image Url"
+                    errors={errors}
+                    touched={touched}
+                    value={values.image}
+                  />
+                  <EP_TEXTFIELD
+                    type="number"
+                    name="price"
+                    required={true}
+                    handleChange={handleChange}
+                    handleBlur={handleBlur}
+                    label="Price"
+                    errors={errors}
+                    touched={touched}
+                    value={values.price}
+                  />
                 </Grid>
                 <Button
                   type="submit"
@@ -172,7 +160,7 @@ export default function SignUp() {
                   variant="contained"
                   sx={{ mt: 3, mb: 2 }}
                 >
-                  Sign Up
+                  Create Product
                 </Button>
               </Form>
             )}
