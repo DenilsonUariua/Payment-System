@@ -7,7 +7,7 @@ import SignIn from "./components/authentication/SignIn";
 import SignUp from "./components/authentication/SignUp";
 import Footer from "./components/navigation/Footer";
 import Navbar from "./components/navigation/Navbar";
-import Dashboard from "./components/pages/Dashboard";
+import Dashboard from "./components/pages/dashboard/Dashboard";
 import CreateProduct from "./components/products/forms/CreateProduct.form";
 import Pricing from "./components/products/Pricing";
 import Products from "./components/products/Products";

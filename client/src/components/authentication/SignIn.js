@@ -81,7 +81,7 @@ export default function SignIn() {
                   const { data } = res;
                   console.log(data);
                   setSubmitting(false);
-                  navigate("/dashboard", { state: { data } }, { replace: true });
+                  navigate("/products", { state: { data } }, { replace: true });
                 })
                 .catch((err) => {
                   console.log(err);

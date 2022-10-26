@@ -1,4 +1,4 @@
-import React, {useEffect} from "react";
+import React, { useEffect } from "react";
 import DataTable from "react-data-table-component";
 import { Button } from "reactstrap";
 import Container from "@mui/material/Container";
@@ -28,62 +28,9 @@ const columns = [
     name: "Status",
     selector: (row) => row.status,
     sortable: true
-  },
-  
+  }
 ];
 
-const tableDataItems = [
-  {
-    id: 1,
-    title: "Beetlejuice",
-    year: "1988"
-  },
-  {
-    id: 2,
-    title: "Ghostbusters",
-    year: "1984"
-  },
-    {
-    id: 3,
-    title: "Ghostbusters 2",
-    year: "1989"
-    },
-    {
-    id: 4,
-    title: "Ghostbusters 3",
-    year: "2020"
-    },
-    {
-    id: 5,
-    title: "Ghostbusters 4",
-    year: "2021"
-    },
-    {
-    id: 6,
-    title: "Ghostbusters 5",
-    year: "2022"
-    },
-    {
-    id: 7,
-    title: "Ghostbusters 6",
-    year: "2023"
-    },
-    {
-    id: 8,
-    title: "Ghostbusters 7",
-    year: "2024"
-    },
-    {
-    id: 9,
-    title: "Ghostbusters 8",
-    year: "2025"
-    },
-    {
-    id: 10,
-    title: "Ghostbusters 9",
-    year: "2026"
-    },
-];
 const theme = createTheme();
 
 const Products = () => {
@@ -96,7 +43,7 @@ const Products = () => {
     axios
       .get(`${REACT_APP_AUTH_API_URL}/products`)
       .then((res) => {
-        console.log('Data: ',res.data);
+        console.log("Data: ", res.data);
         setData(res.data);
       })
       .catch((err) => {
@@ -133,8 +80,8 @@ const Products = () => {
       </Button>
     );
   }, [data, selectedRows, toggleCleared]);
-  if(data === undefined) {
-    return <div>Loading...</div>
+  if (data === undefined) {
+    return <div>Loading...</div>;
   }
 
   return (
@@ -143,7 +90,7 @@ const Products = () => {
         component="main"
         maxWidth="lg"
         style={{
-            marginTop: '5%',
+          marginTop: "5%",
           boxShadow: "0 0 16px 0 rgba(0,0,0,0.7)"
         }}
       >
