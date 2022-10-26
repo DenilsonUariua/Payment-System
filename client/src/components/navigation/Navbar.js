@@ -1,4 +1,4 @@
-import * as React from "react";
+import React, { useContext, useState } from "react";
 import AppBar from "@mui/material/AppBar";
 import Box from "@mui/material/Box";
 import Toolbar from "@mui/material/Toolbar";
@@ -13,13 +13,18 @@ import Tooltip from "@mui/material/Tooltip";
 import MenuItem from "@mui/material/MenuItem";
 import Logo from "../../assets/icon.png";
 import { Link } from "react-router-dom";
+import { UserContext } from "../../use-context/UserContext";
+import SignIn from "../authentication/SignIn";
 
-const pages = ["products", "pricing", "signin", "signup"];
-const settings = ["Profile", "Account", "Dashboard", "Logout"];
+const authenticatedPages = ["Products", "Pricing", "Signin", "Signup"];
+const unauthenticatedPages = ["Signin", "Signup"];
+const settingsAuthenticated = ["Profile", "Account", "Dashboard", "Logout"];
+const settingsUnathenticaed = ["Home", "Signin", "Signup"];
 
 const Navbar = () => {
-  const [anchorElNav, setAnchorElNav] = React.useState(null);
-  const [anchorElUser, setAnchorElUser] = React.useState(null);
+  const [anchorElNav, setAnchorElNav] = useState(null);
+  const [anchorElUser, setAnchorElUser] = useState(null);
+  const { user, setUser } = useContext(UserContext);
 
   const handleOpenNavMenu = (event) => {
     setAnchorElNav(event.currentTarget);
@@ -35,7 +40,7 @@ const Navbar = () => {
   const handleCloseUserMenu = () => {
     setAnchorElUser(null);
   };
-
+  console.log("user", user);
   return (
     <AppBar position="static">
       <Container maxWidth="xl">
@@ -61,40 +66,60 @@ const Navbar = () => {
               anchorEl={anchorElNav}
               anchorOrigin={{
                 vertical: "bottom",
-                horizontal: "left"
+                horizontal: "left",
               }}
               keepMounted
               transformOrigin={{
                 vertical: "top",
-                horizontal: "left"
+                horizontal: "left",
               }}
               open={Boolean(anchorElNav)}
               onClose={handleCloseNavMenu}
               sx={{
-                display: { xs: "block", md: "none" }
+                display: { xs: "block", md: "none" },
               }}
             >
-              {pages.map((page) => (
-                <MenuItem key={page} onClick={handleCloseNavMenu}>
-                  <Link to={`/${page}`}>
-                    <Typography textAlign="center">{page}</Typography>
-                  </Link>
-                </MenuItem>
-              ))}
+              {user !== null
+                ? authenticatedPages.map((page) => (
+                    <MenuItem key={page} onClick={handleCloseNavMenu}>
+                      <Link to={`/${page.toLowerCase()}`}>
+                        <Typography textAlign="center">{page}</Typography>
+                      </Link>
+                    </MenuItem>
+                  ))
+                : unauthenticatedPages.map((page) => (
+                    <MenuItem key={page} onClick={handleCloseNavMenu}>
+                      <Link to={`/${page.toLowerCase()}`}>
+                        <Typography textAlign="center">{page}</Typography>
+                      </Link>
+                    </MenuItem>
+                  ))}
             </Menu>
           </Box>
           <Box sx={{ flexGrow: 1, display: { xs: "none", md: "flex" } }}>
-            {pages.map((page) => (
-              <Link to={`/${page}`} className="header-links">
-                <Button
-                  key={page}
-                  onClick={handleCloseNavMenu}
-                  sx={{ my: 2, color: "white", display: "block" }}
-                >
-                  {page}
-                </Button>
-              </Link>
-            ))}
+            {user !== null
+              ? authenticatedPages.map((page) => (
+                  <Link to={`/${page.toLowerCase()}`} className="header-links">
+                    <Button
+                      key={page}
+                      onClick={handleCloseNavMenu}
+                      sx={{ my: 2, color: "white", display: "block" }}
+                    >
+                      {page}
+                    </Button>
+                  </Link>
+                ))
+              : unauthenticatedPages.map((page) => (
+                  <Link to={`/${page.toLowerCase()}`} className="header-links">
+                    <Button
+                      key={page}
+                      onClick={handleCloseNavMenu}
+                      sx={{ my: 2, color: "white", display: "block" }}
+                    >
+                      {page}
+                    </Button>
+                  </Link>
+                ))}
           </Box>
 
           <Box sx={{ flexGrow: 0 }}>
@@ -109,21 +134,31 @@ const Navbar = () => {
               anchorEl={anchorElUser}
               anchorOrigin={{
                 vertical: "top",
-                horizontal: "right"
+                horizontal: "right",
               }}
               keepMounted
               transformOrigin={{
                 vertical: "top",
-                horizontal: "right"
+                horizontal: "right",
               }}
               open={Boolean(anchorElUser)}
               onClose={handleCloseUserMenu}
             >
-              {settings.map((setting) => (
-                <MenuItem key={setting} onClick={handleCloseUserMenu}>
-                  <Typography textAlign="center">{setting}</Typography>
-                </MenuItem>
-              ))}
+              {user === null
+                ? settingsUnathenticaed.map((setting) => (
+                    <Link to={`/${setting.toLowerCase()}`}>
+                      <MenuItem key={setting} onClick={handleCloseUserMenu}>
+                        <Typography textAlign="center">{setting}</Typography>
+                      </MenuItem>
+                    </Link>
+                  ))
+                : settingsAuthenticated.map((setting) => (
+                    <Link to={`/${setting.toLowerCase()}`}>
+                      <MenuItem key={setting} onClick={handleCloseUserMenu}>
+                        <Typography textAlign="center">{setting}</Typography>
+                      </MenuItem>
+                    </Link>
+                  ))}
             </Menu>
           </Box>
         </Toolbar>

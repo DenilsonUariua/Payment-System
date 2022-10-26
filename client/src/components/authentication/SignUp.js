@@ -16,6 +16,9 @@ import { Formik, Form } from "formik";
 import { userModel } from "./models/userModel";
 // import useNavigate from react router dom
 import { useNavigate } from "react-router-dom";
+import { useEffect, useContext } from "react";
+import { UserContext } from "../../use-context/UserContext";
+import { useLocalStorage } from "../../helpers/save-data/saveToLocalStorage";
 import axios from "axios";
 
 // socket io
@@ -87,8 +90,9 @@ export default function SignUp() {
               axios
                 .post(`${REACT_APP_AUTH_API_URL}/signup`, values)
                 .then((res) => {
-                  const { data } = res;
+                  const { data } = res;                  
                   // redirect to login page
+                  localStorage.setItem("user", JSON.stringify(data));
                   console.log("data", data);
                   // pass data to login page
                   navigate("/dashboard", { state: { data } });

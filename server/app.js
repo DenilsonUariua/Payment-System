@@ -19,15 +19,15 @@ const sessionMiddleware = session({
   resave: false,
   saveUninitialized: false,
   cookie: {
-    expires: 600000
-  }
+    expires: 600000,
+  },
 });
 const app = express();
 app.use(
   cors({
     origin: ["http://localhost:3000"],
     methods: ["GET,HEAD,PUT,PATCH,POST,DELETE"],
-    credentials: true
+    credentials: true,
   })
 );
 const httpServer = createServer(app);
@@ -76,7 +76,12 @@ app.post("/login", sessionChecker, async (req, res) => {
       } else {
         req.session.user = user;
         req.session.authenticated = true;
-        return res.status(200).send(user);
+        return res.status(200).send({
+          firstName: user.firstName,
+          lastName: user.lastName,
+          email: user.email,
+          type: user.type,
+        });
       }
     });
   } catch (error) {
@@ -97,7 +102,7 @@ app
       firstName: req.body.firstName,
       lastName: req.body.lastName,
       email: req.body.email,
-      password: req.body.password
+      password: req.body.password,
     });
     user.save(async (err, docs) => {
       if (err) {
@@ -106,7 +111,12 @@ app
       } else {
         console.log("Success: ", docs);
         req.session.user = docs;
-        res.status(200).send(docs);
+        res.status(200).send({
+          firstName: docs.firstName,
+          lastName: docs.lastName,
+          email: docs.email,
+          type: docs.type,
+        });
       }
     });
   });
@@ -130,7 +140,7 @@ app.route("/product").post((req, res) => {
     price: req.body.price,
     description: req.body.description,
     image: req.body.image,
-    sellerId: "63557d144fd226230c591153"
+    sellerId: "63557d144fd226230c591153",
   });
   product.save(async (err, docs) => {
     if (err) {
@@ -146,8 +156,8 @@ app.route("/product").post((req, res) => {
 const io = new Server(httpServer, {
   cors: {
     origin: "http://localhost:3000",
-    methods: ["GET", "POST"]
-  }
+    methods: ["GET", "POST"],
+  },
 });
 httpServer.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);

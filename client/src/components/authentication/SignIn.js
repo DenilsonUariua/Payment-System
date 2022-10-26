@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import { useEffect, useContext } from "react";
 import Avatar from "@mui/material/Avatar";
 import Button from "@mui/material/Button";
 import CssBaseline from "@mui/material/CssBaseline";
@@ -12,6 +12,7 @@ import { createTheme, ThemeProvider } from "@mui/material/styles";
 import { Formik, Form } from "formik";
 import { userModel } from "./models/userModel";
 import { useNavigate } from "react-router-dom";
+import { UserContext } from "../../use-context/UserContext";
 import axios from "axios";
 // get api url
 const { REACT_APP_AUTH_API_URL } = process.env;
@@ -38,7 +39,8 @@ const theme = createTheme();
 
 export default function SignIn() {
   const navigate = useNavigate();
- 
+  const { user, setUser } = useContext(UserContext);
+
   return (
     <ThemeProvider theme={theme}>
       <Container
@@ -80,6 +82,8 @@ export default function SignIn() {
                 .then((res) => {
                   const { data } = res;
                   console.log(data);
+                  localStorage.setItem("user", JSON.stringify(data));
+                  setUser(data);
                   setSubmitting(false);
                   navigate("/products", { state: { data } }, { replace: true });
                 })
