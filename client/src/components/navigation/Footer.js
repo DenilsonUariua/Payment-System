@@ -10,16 +10,8 @@ export function Footer() {
   return (
     <AppBar position="fixed" color="primary" sx={{ top: "auto", bottom: 0 }}>
       <Toolbar>
-        <IconButton color="inherit" aria-label="open drawer">
-          <MenuIcon />
-        </IconButton>
         <Box sx={{ flexGrow: 1 }} />
-        <IconButton color="inherit">
-          <SearchIcon />
-        </IconButton>
-        <IconButton color="inherit">
-          <MoreIcon />
-        </IconButton>
+        
       </Toolbar>
     </AppBar>
   );

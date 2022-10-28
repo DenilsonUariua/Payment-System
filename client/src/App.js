@@ -33,6 +33,7 @@ function App() {
           <Routes>
             {/* add homepage */}
             <Route path="/" element={<HomePage />} />
+            <Route path="/home" element={<HomePage />} />
             <Route path="/signin" element={<SignIn />}></Route>
             <Route path="/signup" element={<SignUp />}></Route>
             <Route path="/dashboard" element={<Dashboard />}></Route>
