@@ -2,7 +2,7 @@ import React, { useEffect, useContext } from "react";
 import { UserContext } from "../../use-context/UserContext";
 import { useNavigate } from "react-router-dom";
 
-const Logout = () => {
+export const Logout = () => {
   const { user, setUser } = useContext(UserContext);
   const navigate = useNavigate();
   useEffect(() => {
@@ -15,5 +15,3 @@ const Logout = () => {
 
   return <div>Logging out...</div>;
 };
-
-export default Logout;

@@ -1,10 +1,9 @@
-import React, { useEffect, useState, useContext } from "react";
+import React, { useEffect, useState, Fragment } from "react";
 import DataTable from "react-data-table-component";
-import { Button } from "reactstrap";
+import Button from "@mui/material/Button";
 import Container from "@mui/material/Container";
 import { createTheme, ThemeProvider } from "@mui/material/styles";
-import { useNavigate } from "react-router-dom";
-import { UserContext } from "../../use-context/UserContext";
+import { Link } from "react-router-dom";
 import axios from "axios";
 // get api url
 const { REACT_APP_AUTH_API_URL } = process.env;
@@ -13,23 +12,34 @@ const columns = [
   {
     name: "Name",
     selector: (row) => row.name,
-    sortable: true,
+    sortable: true
   },
   {
     name: "Price",
     selector: (row) => row.price,
-    sortable: true,
+    sortable: true
   },
   {
     name: "Description",
     selector: (row) => row.description,
-    sortable: true,
+    sortable: true
   },
   {
     name: "Status",
     selector: (row) => row.status,
-    sortable: true,
+    sortable: true
   },
+  {
+    name: "Actions",
+    selector: (row) => (
+      <Fragment>
+        <Link>
+          <Button variant="outlined">BUY</Button>
+        </Link>
+      </Fragment>
+    ),
+    sortable: true
+  }
 ];
 
 const theme = createTheme();
@@ -38,16 +48,12 @@ const Products = () => {
   const [selectedRows, setSelectedRows] = useState([]);
   const [toggleCleared, setToggleCleared] = useState(false);
   const [data, setData] = useState(undefined);
-  const { user, setUser } = useContext(UserContext);
-
-  console.log("message", user);
 
   // fetch products from api
   useEffect(() => {
     axios
       .get(`${REACT_APP_AUTH_API_URL}/products`)
       .then((res) => {
-        console.log("Data: ", res.data);
         setData(res.data);
       })
       .catch((err) => {
@@ -95,7 +101,7 @@ const Products = () => {
         maxWidth="lg"
         style={{
           marginTop: "5%",
-          boxShadow: "0 0 16px 0 rgba(0,0,0,0.7)",
+          boxShadow: "0 0 16px 0 rgba(0,0,0,0.7)"
         }}
       >
         <DataTable

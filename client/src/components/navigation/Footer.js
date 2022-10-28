@@ -6,7 +6,7 @@ import MenuIcon from "@mui/icons-material/Menu";
 import SearchIcon from "@mui/icons-material/Search";
 import MoreIcon from "@mui/icons-material/MoreVert";
 
-export default function Footer() {
+export function Footer() {
   return (
     <AppBar position="fixed" color="primary" sx={{ top: "auto", bottom: 0 }}>
       <Toolbar>

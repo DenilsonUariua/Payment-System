@@ -3,8 +3,6 @@ const mongoose = require("mongoose");
 const bcrypt = require("bcrypt");
 const { MONGODB_URI } = process.env;
 
-console.log("Uri", MONGODB_URI);
-
 mongoose.connect(MONGODB_URI, {
   useNewUrlParser: true,
   useUnifiedTopology: true

@@ -25,7 +25,7 @@
     "yup": "^0.32.11"
   },
   "scripts": {
-    "start": "react-scripts start",
+    "start": "react-app-rewired start",
     "build": "react-scripts build",
     "test": "react-scripts test",
     "eject": "react-scripts eject"
@@ -49,6 +49,8 @@
     ]
   },
   "devDependencies": {
+    "react-app-alias": "^2.2.2",
+    "react-app-rewired": "^2.2.1",
     "react-router-dom": "^6.4.2"
   }
 }

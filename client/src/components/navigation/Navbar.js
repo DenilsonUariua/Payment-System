@@ -1,4 +1,4 @@
-import React, { useContext, useState } from "react";
+import { useContext, useState } from "react";
 import AppBar from "@mui/material/AppBar";
 import Box from "@mui/material/Box";
 import Toolbar from "@mui/material/Toolbar";
@@ -14,14 +14,18 @@ import MenuItem from "@mui/material/MenuItem";
 import Logo from "../../assets/icon.png";
 import { Link } from "react-router-dom";
 import { UserContext } from "../../use-context/UserContext";
-import SignIn from "../authentication/SignIn";
 
-const authenticatedPages = ["Products", "Pricing", "Signin", "Signup"];
+const authenticatedPages = [
+  "Products",
+  "Pricing",
+  "Dashboard",
+  "Create Product"
+];
 const unauthenticatedPages = ["Signin", "Signup"];
 const settingsAuthenticated = ["Profile", "Account", "Dashboard", "Logout"];
 const settingsUnathenticaed = ["Home", "Signin", "Signup"];
 
-const Navbar = () => {
+export const Navbar = () => {
   const [anchorElNav, setAnchorElNav] = useState(null);
   const [anchorElUser, setAnchorElUser] = useState(null);
   const { user, setUser } = useContext(UserContext);
@@ -40,7 +44,6 @@ const Navbar = () => {
   const handleCloseUserMenu = () => {
     setAnchorElUser(null);
   };
-  console.log("user", user);
   return (
     <AppBar position="static">
       <Container maxWidth="xl">
@@ -66,17 +69,17 @@ const Navbar = () => {
               anchorEl={anchorElNav}
               anchorOrigin={{
                 vertical: "bottom",
-                horizontal: "left",
+                horizontal: "left"
               }}
               keepMounted
               transformOrigin={{
                 vertical: "top",
-                horizontal: "left",
+                horizontal: "left"
               }}
               open={Boolean(anchorElNav)}
               onClose={handleCloseNavMenu}
               sx={{
-                display: { xs: "block", md: "none" },
+                display: { xs: "block", md: "none" }
               }}
             >
               {user !== null
@@ -125,7 +128,10 @@ const Navbar = () => {
           <Box sx={{ flexGrow: 0 }}>
             <Tooltip title="Open settings">
               <IconButton onClick={handleOpenUserMenu} sx={{ p: 0 }}>
-                <Avatar alt="Remy Sharp" src="/static/images/avatar/2.jpg" />
+                <Avatar
+                  alt={`${user && user.firstName}`}
+                  src="/static/images/avatar/2.jpg"
+                />
               </IconButton>
             </Tooltip>
             <Menu
@@ -134,12 +140,12 @@ const Navbar = () => {
               anchorEl={anchorElUser}
               anchorOrigin={{
                 vertical: "top",
-                horizontal: "right",
+                horizontal: "right"
               }}
               keepMounted
               transformOrigin={{
                 vertical: "top",
-                horizontal: "right",
+                horizontal: "right"
               }}
               open={Boolean(anchorElUser)}
               onClose={handleCloseUserMenu}
@@ -166,4 +172,3 @@ const Navbar = () => {
     </AppBar>
   );
 };
-export default Navbar;

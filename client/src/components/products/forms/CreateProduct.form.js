@@ -1,12 +1,8 @@
 import Avatar from "@mui/material/Avatar";
 import Button from "@mui/material/Button";
 import CssBaseline from "@mui/material/CssBaseline";
-import TextField from "@mui/material/TextField";
-import FormControlLabel from "@mui/material/FormControlLabel";
-import Checkbox from "@mui/material/Checkbox";
 import Grid from "@mui/material/Grid";
 import Box from "@mui/material/Box";
-import LockOutlinedIcon from "@mui/icons-material/LockOutlined";
 import InventoryIcon from "@mui/icons-material/Inventory";
 import Typography from "@mui/material/Typography";
 import Container from "@mui/material/Container";
@@ -43,7 +39,7 @@ function Copyright(props) {
 
 const theme = createTheme();
 
-export default function CreateProduct() {
+export function CreateProduct() {
   // use navigate from react router dom
   const navigate = useNavigate();
   return (
@@ -78,15 +74,11 @@ export default function CreateProduct() {
             validateOnBlur={true}
             onSubmit={(values, actions) => {
               actions.setSubmitting(true);
-
               // submit data to api
-              console.log("values: ", values);
               axios
                 .post(`${REACT_APP_AUTH_API_URL}/product`, values)
                 .then((res) => {
                   const { data } = res;
-                  // redirect to login page
-                  console.log("data", data);
                   actions.setSubmitting(false);
                   actions.resetForm();
                   // pass data to login page
@@ -110,7 +102,6 @@ export default function CreateProduct() {
             }) => (
               <Form onSubmit={handleSubmit}>
                 <Grid container spacing={2}>
-                  {console.log("values", values)}
                   <EP_TEXTFIELD
                     name="name"
                     required={true}

@@ -1,4 +1,4 @@
-import { useEffect, useContext } from "react";
+import { useContext } from "react";
 import Avatar from "@mui/material/Avatar";
 import Button from "@mui/material/Button";
 import CssBaseline from "@mui/material/CssBaseline";
@@ -37,7 +37,7 @@ function Copyright(props) {
 
 const theme = createTheme();
 
-export default function SignIn() {
+export function SignIn() {
   const navigate = useNavigate();
   const { user, setUser } = useContext(UserContext);
 
@@ -81,7 +81,6 @@ export default function SignIn() {
                 .post(`${REACT_APP_AUTH_API_URL}/login`, values)
                 .then((res) => {
                   const { data } = res;
-                  console.log(data);
                   localStorage.setItem("user", JSON.stringify(data));
                   setUser(data);
                   setSubmitting(false);
