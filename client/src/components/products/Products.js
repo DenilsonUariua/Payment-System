@@ -44,7 +44,7 @@ const columns = [
 
 const theme = createTheme();
 
-const Products = () => {
+export const Products = () => {
   const [selectedRows, setSelectedRows] = useState([]);
   const [toggleCleared, setToggleCleared] = useState(false);
   const [data, setData] = useState(undefined);
@@ -118,5 +118,3 @@ const Products = () => {
     </ThemeProvider>
   );
 };
-
-export default Products;
