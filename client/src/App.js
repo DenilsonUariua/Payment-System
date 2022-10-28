@@ -2,7 +2,7 @@ import "./App.css";
 import { useState, useEffect } from "react";
 import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
 import { SignIn, SignUp, Logout } from "@authentication";
-import { Navbar, Footer } from "@navigation";
+import { Navbar, Footer, HomePage } from "@navigation";
 import { Dashboard } from "@pages/dashboard";
 import { CreateProduct } from "@products/forms";
 import { Pricing, Products } from "@products";
@@ -31,6 +31,8 @@ function App() {
         <UserContext.Provider value={{ user, setUser }}>
           <Navbar />
           <Routes>
+            {/* add homepage */}
+            <Route path="/" element={<HomePage />} />
             <Route path="/signin" element={<SignIn />}></Route>
             <Route path="/signup" element={<SignUp />}></Route>
             <Route path="/dashboard" element={<Dashboard />}></Route>

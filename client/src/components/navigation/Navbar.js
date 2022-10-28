@@ -50,7 +50,9 @@ export const Navbar = () => {
         <Toolbar disableGutters>
           {/* image */}
           <Box sx={{ flexGrow: 1 }}>
-            <Avatar alt="logo" src={Logo} />
+            <Link to="/">
+              <Avatar alt="logo" src={Logo} />
+            </Link>
           </Box>
 
           <Box sx={{ flexGrow: 1, display: { xs: "flex", md: "none" } }}>

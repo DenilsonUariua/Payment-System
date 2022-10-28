@@ -15,7 +15,8 @@ import { productValidationSchema } from "../validationSchemas/product.schema";
 // import useNavigate from react router dom
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
-import { EP_TEXTFIELD } from "../../../helpers/form/EP_TEXTFIELD";
+import { EP_TEXTFIELD } from "@helpers/form";
+import { Notification } from "@helpers/notifications";
 
 // socket io
 import { io } from "socket.io-client";
@@ -79,8 +80,13 @@ export function CreateProduct() {
                 .post(`${REACT_APP_AUTH_API_URL}/product`, values)
                 .then((res) => {
                   const { data } = res;
-                  actions.setSubmitting(false);
-                  actions.resetForm();
+                  Notification("Success", "Product created successfully")
+                  // actions.resetForm();
+                  setTimeout(() => {
+                    actions.setSubmitting(false);
+                    window.location.href = "/products";
+                  }, 2000);
+                
                   // pass data to login page
                   //   navigate("/dashboard", { state: { data } });
                 })
@@ -111,6 +117,7 @@ export function CreateProduct() {
                     errors={errors}
                     touched={touched}
                     value={values.name}
+                    disabled={isSubmitting}
                   />
                   <EP_TEXTFIELD
                     name="description"
@@ -121,6 +128,7 @@ export function CreateProduct() {
                     errors={errors}
                     touched={touched}
                     value={values.description}
+                    disabled={isSubmitting}
                   />
                   <EP_TEXTFIELD
                     type="url"
@@ -132,6 +140,7 @@ export function CreateProduct() {
                     errors={errors}
                     touched={touched}
                     value={values.image}
+                    disabled={isSubmitting}
                   />
                   <EP_TEXTFIELD
                     type="number"
@@ -143,6 +152,7 @@ export function CreateProduct() {
                     errors={errors}
                     touched={touched}
                     value={values.price}
+                    disabled={isSubmitting}
                   />
                 </Grid>
                 <Button
@@ -150,6 +160,7 @@ export function CreateProduct() {
                   fullWidth
                   variant="contained"
                   sx={{ mt: 3, mb: 2 }}
+                  disabled={isSubmitting}
                 >
                   Create Product
                 </Button>
