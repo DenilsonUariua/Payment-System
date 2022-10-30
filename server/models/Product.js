@@ -26,17 +26,16 @@ const productSchema = mongoose.Schema({
     required: true
   },
   sellerId: {
-    type: mongoose.Schema.Types.ObjectId,
-    ref: "user",
+    type: String,
     required: true
   },
   buyerId: {
-    type: mongoose.Schema.Types.ObjectId,
-    ref: "user"
+    type: String,
+    required: false
   },
   status: {
     type: String,
-    enum: ["Available", "Sold"],
+    enum: ["Available", "Sold", "Payment Pending"],
     default: "Available"
   }
 });

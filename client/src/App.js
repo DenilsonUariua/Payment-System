@@ -6,6 +6,7 @@ import { Navbar, Footer, HomePage } from "@navigation";
 import { Dashboard } from "@pages/dashboard";
 import { CreateProduct } from "@products/forms";
 import { Pricing, Products } from "@products";
+import { Purchases } from "@purchases";
 import { UserContext } from "./use-context/UserContext";
 import { io } from "socket.io-client";
 const { REACT_APP_AUTH_API_URL } = process.env;
@@ -40,6 +41,7 @@ function App() {
             <Route path="/create product" element={<CreateProduct />}></Route>
             <Route path="/pricing" element={<Pricing />}></Route>
             <Route path="/products" element={<Products />}></Route>
+            <Route path="/purchases" element={<Purchases />}></Route>
             <Route path="/logout" element={<Logout />}></Route>
           </Routes>
           <Footer />

@@ -1,3 +1,4 @@
+import React, { useContext } from "react";
 import Avatar from "@mui/material/Avatar";
 import Button from "@mui/material/Button";
 import CssBaseline from "@mui/material/CssBaseline";
@@ -12,6 +13,8 @@ import { Link } from "react-router-dom";
 import { Formik, Form } from "formik";
 import { userModel } from "./models/userModel";
 import { useNavigate } from "react-router-dom";
+import { UserContext } from "../../use-context/UserContext";
+import { Notification } from "@helpers/notifications";
 import axios from "axios";
 
 // socket io
@@ -39,6 +42,7 @@ const theme = createTheme();
 export function SignUp() {
   // use navigate from react router dom
   const navigate = useNavigate();
+  const { setUser } = useContext(UserContext);
   return (
     <ThemeProvider theme={theme}>
       <Container
@@ -82,13 +86,14 @@ export function SignUp() {
               axios
                 .post(`${REACT_APP_AUTH_API_URL}/signup`, values)
                 .then((res) => {
-                  const { data } = res;                  
-                  // redirect to login page
+                  const { data } = res;
+                  Notification("Success", `Welcome ${data.firstName}`);
+                  setUser(data);
                   localStorage.setItem("user", JSON.stringify(data));
-                  // pass data to login page
                   navigate("/dashboard", { state: { data } });
                 })
                 .catch((err) => {
+                  Notification("Error", "Something went wrong");
                   console.log("Error: ", err);
                 });
               setSubmitting(false);

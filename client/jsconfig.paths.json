@@ -10,7 +10,8 @@
       "@authentication": ["src/components/authentication"],
       "@helpers": ["src/helpers"],
       "@assets": ["src/assets"],
-      "@context": ["src/use-context"]
+      "@context": ["src/use-context"],
+      "@purchases": ["src/components/purchases"]
     }
   }
 }

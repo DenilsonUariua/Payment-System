@@ -3,5 +3,6 @@ export const ProductModel = {
     description: "",
     price: undefined,
     image: "",
+    sellerId: "",
    
 };

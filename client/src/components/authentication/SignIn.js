@@ -13,6 +13,7 @@ import { Formik, Form } from "formik";
 import { userModel } from "./models/userModel";
 import { useNavigate } from "react-router-dom";
 import { UserContext } from "../../use-context/UserContext";
+import { Notification } from "@helpers/notifications";
 import axios from "axios";
 // get api url
 const { REACT_APP_AUTH_API_URL } = process.env;
@@ -83,10 +84,12 @@ export function SignIn() {
                   const { data } = res;
                   localStorage.setItem("user", JSON.stringify(data));
                   setUser(data);
+                  Notification("Success", `Welcome back ${data.firstName}`);
                   setSubmitting(false);
                   navigate("/products", { state: { data } }, { replace: true });
                 })
                 .catch((err) => {
+                  Notification("Error", `Incorrect email or password`);
                   console.log(err);
                   setSubmitting(false);
                 });

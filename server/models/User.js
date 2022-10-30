@@ -20,10 +20,13 @@ const userSchema = mongoose.Schema({
     type: String,
     required: true,
   },
-  type: {
+  sellerId: {
     type: String,
-    enum: ["Buyer", "Seller"],
-    default: "Buyer",
+    required: true
+  },
+  buyerId: {
+    type: String,
+    required: true
   },
 });
 

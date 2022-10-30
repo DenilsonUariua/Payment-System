@@ -7,10 +7,12 @@ var session = require("express-session");
 var morgan = require("morgan");
 var User = require("./models/User");
 var Product = require("./models/Product");
+var Purchase = require("./models/Purchase");
 const cors = require("cors");
 var http = require("http");
 const { createServer } = require("http");
 const { Server } = require("socket.io");
+var uniqid = require("uniqid");
 const { PORT } = process.env;
 
 const sessionMiddleware = session({
@@ -80,7 +82,8 @@ app.post("/login", sessionChecker, async (req, res) => {
           firstName: user.firstName,
           lastName: user.lastName,
           email: user.email,
-          type: user.type,
+          buyerId: user.buyerId,
+          sellerId: user.sellerId,
         });
       }
     });
@@ -98,11 +101,17 @@ app
     res.sendFile(__dirname + "/public/signup.html");
   })
   .post((req, res) => {
+    // generate an id
+    const buyerId = uniqid("buyer-");
+    const sellerId = uniqid("seller-");
+
     let user = new User({
       firstName: req.body.firstName,
       lastName: req.body.lastName,
       email: req.body.email,
       password: req.body.password,
+      buyerId: buyerId,
+      sellerId: sellerId,
     });
     user.save(async (err, docs) => {
       if (err) {
@@ -115,7 +124,8 @@ app
           firstName: docs.firstName,
           lastName: docs.lastName,
           email: docs.email,
-          type: docs.type,
+          buyerId: docs.buyerId,
+          sellerId: docs.sellerId,
         });
       }
     });
@@ -132,6 +142,30 @@ app.route("/products").get((req, res) => {
     }
   });
 });
+app.route("/purchase").post((req, res) => {
+  console.log("req.body", req.body);
+  const purchase = new Purchase(req.body);
+  purchase.save((err, data) => {
+    if (err) {
+      res.sendStatus(500);
+    } else {
+      // use productId to update product status
+      Product.findOneAndUpdate(
+        { _id: req.body.productId },
+        { status: "Payment Pending" },
+        (err, docs) => {
+          if (err) {
+            console.log("Error: ", err);
+            res.status(500).send("Error updating product status");
+          } else {
+            console.log("Success: ", docs);
+          }
+        }
+      );
+      res.send({ purchaseId: data.purchaseId });
+    }
+  });
+});
 
 app.route("/product").post((req, res) => {
   console.log("req.body", req.body);
@@ -140,7 +174,7 @@ app.route("/product").post((req, res) => {
     price: req.body.price,
     description: req.body.description,
     image: req.body.image,
-    sellerId: "63557d144fd226230c591153",
+    sellerId: req.body.sellerId,
   });
   product.save(async (err, docs) => {
     if (err) {
@@ -182,98 +216,3 @@ io.use((socket, next) => {
 io.on("connection", (socket) => {
   console.log("Connected", socket.request.session);
 });
-// var app = express();
-
-// // set our application port
-
-// // set morgan to log info about our requests for development use.
-// app.use(morgan("dev"));
-
-// // initialize cookie-parser to allow us access the cookies stored in the browser.
-
-// // initialize express-session to allow us track the logged-in user across sessions.
-// app.use(
-//   session({
-//     key: "user_sid",
-//     secret: "somerandonstuffs",
-//     resave: false,
-//     saveUninitialized: false,
-//     cookie: {
-//       expires: 600000,
-//     },
-//   })
-// );
-
-// // route for Home-Page
-// app.get("/", sessionChecker, (req, res) => {
-//   res.redirect("/login");
-// });
-
-// // route for user signup
-
-// // route for user Login
-// app
-//   .route("/login")
-//   .get(sessionChecker, (req, res) => {
-//     res.sendFile(__dirname + "/public/login.html");
-//   })
-//   .post(async (req, res) => {
-//     console.log("Login", req.body);
-//     io.on("connection", (socket) => {
-//       console.log("a user connected");
-//     });
-//     var email = req.body.email,
-//       password = req.body.password;
-
-//     try {
-//       var user = await User.findOne({ email: email }).exec();
-//       if (!user) {
-//         res.status(401).send("User not found");
-//       }
-//       user.comparePassword(password, (error, match) => {
-//         if (!match) {
-//           res.send("Incorrect password");
-//         }
-//       });
-//       req.session.user = user;
-//       res.status(200).send(`Welcome ${user.firstName}`);
-//     } catch (error) {
-//       console.log(error);
-//     }
-//   });
-
-// // route for user's dashboard
-// app.get("/dashboard", (req, res) => {
-//   if (req.session.user && req.cookies.user_sid) {
-//     res.sendFile(__dirname + "/public/dashboard.html");
-//   } else {
-//     res.redirect("/login");
-//   }
-// });
-
-// // route for user logout
-// app.get("/logout", (req, res) => {
-//   if (req.session.user && req.cookies.user_sid) {
-//     res.clearCookie("user_sid");
-//     res.redirect("/");
-//   } else {
-//     res.redirect("/login");
-//   }
-// });
-
-// // route for handling 404 requests(unavailable routes)
-// app.use(function (req, res, next) {
-//   res.status(404).send("Sorry can't find that!");
-// });
-
-// const secureServer = http.createServer(app);
-// const io = new Server(secureServer, {
-//   cors: {
-//     origin: "http://localhost:3000",
-//     methods: ["GET", "POST"],
-//   },
-// });
-
-// io.on("connection", (socket) => {
-//   console.log("a user connected");
-// });
