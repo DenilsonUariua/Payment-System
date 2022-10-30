@@ -1,4 +1,4 @@
-import React, { useEffect, useState, Fragment, useContext } from "react";
+import React, { useEffect, useState, Fragment } from "react";
 import DataTable from "react-data-table-component";
 import Button from "@mui/material/Button";
 import Container from "@mui/material/Container";
@@ -6,14 +6,13 @@ import { createTheme, ThemeProvider } from "@mui/material/styles";
 import { Link } from "react-router-dom";
 import axios from "axios";
 import { PurchaseProduct } from "./forms";
-import { UserContext } from "@context";
 // get api url
 const { REACT_APP_AUTH_API_URL } = process.env;
 
 const theme = createTheme();
 
 export const Products = () => {
-  const {user} = useContext(UserContext);
+  // const {user} = useContext(UserContext);
   const [selectedRows, setSelectedRows] = useState([]);
   const [toggleCleared, setToggleCleared] = useState(false);
   const [data, setData] = useState(undefined);

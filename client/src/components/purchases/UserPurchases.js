@@ -24,11 +24,6 @@ export const UserPurchases = () => {
     setOpen(true);
   };
 
-  const handleClose = (value) => {
-    setOpen(false);
-    setSelectedProduct(value);
-  };
-
   function getData() {
     user && console.log("user", user);
     user &&
