@@ -17,7 +17,7 @@ import axios from "axios";
 const { REACT_APP_AUTH_API_URL } = process.env;
 
 export function PurchaseProduct(props) {
-  const { onClose, selectedProduct, open } = props;
+  const { onClose, selectedProduct, open, getData } = props;
   const { user, setUser } = useContext(UserContext);
   console.log("selectedValue: ", user);
 
@@ -34,6 +34,8 @@ export function PurchaseProduct(props) {
       .then((res) => {
         console.log(res);
         console.log(res.data);
+        getData();
+        handleClose();
       })
       .catch((err) => {
         console.log(err);

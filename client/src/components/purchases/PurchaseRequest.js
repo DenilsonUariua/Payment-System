@@ -3,41 +3,63 @@ import DataTable from "react-data-table-component";
 import Button from "@mui/material/Button";
 import Container from "@mui/material/Container";
 import { createTheme, ThemeProvider } from "@mui/material/styles";
-import { Link } from "react-router-dom";
+import Grid from "@mui/material/Grid";
 import axios from "axios";
-import { PurchaseProduct } from "./forms";
 import { UserContext } from "@context";
-// get api url
 const { REACT_APP_AUTH_API_URL } = process.env;
 
 const theme = createTheme();
 
-export const Products = () => {
-  const {user} = useContext(UserContext);
+export const PurchaseRequest = () => {
+  const { user } = useContext(UserContext);
   const [selectedRows, setSelectedRows] = useState([]);
   const [toggleCleared, setToggleCleared] = useState(false);
   const [data, setData] = useState(undefined);
   const [open, setOpen] = useState(false);
-  const [selectedProduct, setSelectedProduct] = useState(undefined);
+  const [selectedPurchase, setSelectedPurchase] = useState(undefined);
 
   const handleClickOpen = () => {
     setOpen(true);
   };
 
-  const handleClose = (value) => {
-    setOpen(false);
-    setSelectedProduct(value);
-  };
-  
-  function getData() {
+  const handlecConfirmation = (purchase) => {
     axios
-      .get(`${REACT_APP_AUTH_API_URL}/products`)
+      .get(`${REACT_APP_AUTH_API_URL}/purchases/confirm/${purchase._id}`)
       .then((res) => {
-        setData(res.data);
+        console.log(res);
+        getData();
       })
       .catch((err) => {
         console.log(err);
       });
+  };
+const handleRejection = (purchase) => {
+    axios
+        .get(`${REACT_APP_AUTH_API_URL}/purchases/reject/${purchase._id}`)
+        .then((res) => {
+            console.log(res);
+            getData();
+        })
+        .catch((err) => {
+            console.log(err);
+        });
+};
+
+  const handleClose = (value) => {
+    setOpen(false);
+    setSelectedPurchase(value);
+  };
+
+  function getData() {
+    user &&
+      axios
+        .get(`${REACT_APP_AUTH_API_URL}/purchases/seller/${user.sellerId}`)
+        .then((res) => {
+          setData(res.data);
+        })
+        .catch((err) => {
+          console.log(err);
+        });
   }
   // fetch products from api
   useEffect(() => {
@@ -82,18 +104,13 @@ export const Products = () => {
 
   const columns = [
     {
-      name: "Name",
-      selector: (row) => row.name,
+      name: "Buyer Id",
+      selector: (row) => row.buyerId,
       sortable: true,
     },
     {
-      name: "Price",
-      selector: (row) => row.price,
-      sortable: true,
-    },
-    {
-      name: "Description",
-      selector: (row) => row.description,
+      name: "Purchase Id",
+      selector: (row) => row.purchaseId,
       sortable: true,
     },
     {
@@ -105,18 +122,30 @@ export const Products = () => {
       name: "Actions",
       selector: (row) => (
         <Fragment>
-          <Link>
-            <Button
-            disabled={row.status !== "Available"}
-              variant="outlined"
-              onClick={() => {
-                setSelectedProduct(row);
-                handleClickOpen();
-              }}
-            >
-              BUY
-            </Button>
-          </Link>
+          <Grid container spacing={1}>
+            <Grid item xs={12} sm={6}>
+              <Button
+                variant="outlined"
+                onClick={() => {
+                  setSelectedPurchase(row);
+                  handlecConfirmation(row);
+                }}
+              >
+                Confirm
+              </Button>
+            </Grid>
+            <Grid item xs={12} sm={6}>
+              <Button
+                variant="contained"
+                onClick={() => {
+                  setSelectedPurchase(row);
+                  handleRejection(row);
+                }}
+              >
+                Reject
+              </Button>
+            </Grid>
+          </Grid>
         </Fragment>
       ),
       sortable: true,
@@ -133,14 +162,8 @@ export const Products = () => {
           boxShadow: "0 0 16px 0 rgba(0,0,0,0.7)",
         }}
       >
-        <PurchaseProduct
-          selectedProduct={selectedProduct}
-          open={open}
-          onClose={handleClose}
-          getData={getData}
-        />
         <DataTable
-          title="Products"
+          title="Pending Purchase Request"
           columns={columns}
           data={data}
           selectableRows

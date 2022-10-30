@@ -5,15 +5,15 @@ import Container from "@mui/material/Container";
 import { createTheme, ThemeProvider } from "@mui/material/styles";
 import { Link } from "react-router-dom";
 import axios from "axios";
-import { PurchaseProduct } from "./forms";
+// import { PurchaseProduct } from "./forms";
 import { UserContext } from "@context";
 // get api url
 const { REACT_APP_AUTH_API_URL } = process.env;
 
 const theme = createTheme();
 
-export const Products = () => {
-  const {user} = useContext(UserContext);
+export const UserPurchases = () => {
+  const { user } = useContext(UserContext);
   const [selectedRows, setSelectedRows] = useState([]);
   const [toggleCleared, setToggleCleared] = useState(false);
   const [data, setData] = useState(undefined);
@@ -28,16 +28,18 @@ export const Products = () => {
     setOpen(false);
     setSelectedProduct(value);
   };
-  
+
   function getData() {
-    axios
-      .get(`${REACT_APP_AUTH_API_URL}/products`)
-      .then((res) => {
-        setData(res.data);
-      })
-      .catch((err) => {
-        console.log(err);
-      });
+    user && console.log("user", user);
+    user &&
+      axios
+        .get(`${REACT_APP_AUTH_API_URL}/purchases/buyer/${user.buyerId}`)
+        .then((res) => {
+          setData(res.data);
+        })
+        .catch((err) => {
+          console.log(err);
+        });
   }
   // fetch products from api
   useEffect(() => {
@@ -45,7 +47,7 @@ export const Products = () => {
     return () => {
       setData(undefined);
     };
-  }, []);
+  }, [user]);
 
   const handleRowSelected = React.useCallback((state) => {
     setSelectedRows(state.selectedRows);
@@ -82,18 +84,13 @@ export const Products = () => {
 
   const columns = [
     {
-      name: "Name",
-      selector: (row) => row.name,
+      name: "Seller",
+      selector: (row) => row.sellerId,
       sortable: true,
     },
     {
-      name: "Price",
-      selector: (row) => row.price,
-      sortable: true,
-    },
-    {
-      name: "Description",
-      selector: (row) => row.description,
+      name: "Purchase Id",
+      selector: (row) => row.purchaseId,
       sortable: true,
     },
     {
@@ -107,14 +104,13 @@ export const Products = () => {
         <Fragment>
           <Link>
             <Button
-            disabled={row.status !== "Available"}
               variant="outlined"
               onClick={() => {
                 setSelectedProduct(row);
                 handleClickOpen();
               }}
             >
-              BUY
+              PAY
             </Button>
           </Link>
         </Fragment>
@@ -133,13 +129,8 @@ export const Products = () => {
           boxShadow: "0 0 16px 0 rgba(0,0,0,0.7)",
         }}
       >
-        <PurchaseProduct
-          selectedProduct={selectedProduct}
-          open={open}
-          onClose={handleClose}
-        />
         <DataTable
-          title="Products"
+          title="Your Verified Purchases"
           columns={columns}
           data={data}
           selectableRows

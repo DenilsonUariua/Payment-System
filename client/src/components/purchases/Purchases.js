@@ -7,6 +7,8 @@ import Tabs from "@mui/material/Tabs";
 import Tab from "@mui/material/Tab";
 import Typography from "@mui/material/Typography";
 import Box from "@mui/material/Box";
+import { UserPurchases } from "./UserPurchases";
+import { PurchaseRequest } from "./PurchaseRequest";
 
 function TabPanel(props) {
   const { children, value, index, ...other } = props;
@@ -54,7 +56,7 @@ export function Purchases() {
   };
 
   return (
-    <Box sx={{ bgcolor: "background.paper", marginTop: '1rem' }}>
+    <Box sx={{ bgcolor: "background.paper", marginTop: "1rem" }}>
       <AppBar position="static">
         <Tabs
           value={value}
@@ -74,10 +76,10 @@ export function Purchases() {
         onChangeIndex={handleChangeIndex}
       >
         <TabPanel value={value} index={0} dir={theme.direction}>
-          Your Purchases
+          <UserPurchases />
         </TabPanel>
         <TabPanel value={value} index={1} dir={theme.direction}>
-          Purchases
+          <PurchaseRequest />
         </TabPanel>
       </SwipeableViews>
     </Box>

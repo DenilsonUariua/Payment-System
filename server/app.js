@@ -142,6 +142,67 @@ app.route("/products").get((req, res) => {
     }
   });
 });
+app.route("/purchases/buyer/:id").get((req, res) => {
+  Purchase.find({ buyerId: req.params.id }, (err, docs) => {
+    if (err) {
+      console.log("Error: ", err);
+      res.status(500).send("Error fetching products");
+    } else {
+      console.log("Success: ", docs);
+
+      const verified = docs.filter((doc) => doc.status === "Verified");
+      res.status(200).send(verified);
+    }
+  });
+});
+app.route("/purchases/confirm/:id").get((req, res) => {
+  Purchase.findOneAndUpdate(
+    { _id: req.params.id },
+    { status: "Verified" },
+    (err, docs) => {
+      if (err) {
+        console.log("Error: ", err);
+      } else {
+        console.log("Success: ", docs);
+        res.status(200).send(docs);
+      }
+    }
+  );
+});
+app.route("/purchases/reject/:id").get((req, res) => {
+  Purchase.findOneAndDelete({ _id: req.params.id }, (err, docs) => {
+    if (err) {
+      console.log("Error: ", err);
+    } else {
+      console.log("Success: ", docs);
+      Product.findOneAndUpdate(
+        { _id: docs.productId },
+        { status: "Available" },
+        (err, product) => {
+          if (err) {
+            res.status(500);
+            console.log("Error: ", err);
+          } else {
+            res.status(200).send(docs);
+            console.log("Success: ", product);
+          }
+        }
+      );
+    }
+  });
+});
+app.route("/purchases/seller/:id").get((req, res) => {
+  Purchase.find({ sellerId: req.params.id }, (err, docs) => {
+    if (err) {
+      console.log("Error: ", err);
+      res.status(500).send("Error fetching products");
+    } else {
+      console.log("Success: ", docs);
+      const pending = docs.filter((doc) => doc.status === "Pending");
+      res.status(200).send(pending);
+    }
+  });
+});
 app.route("/purchase").post((req, res) => {
   console.log("req.body", req.body);
   const purchase = new Purchase(req.body);

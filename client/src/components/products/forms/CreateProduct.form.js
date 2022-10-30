@@ -10,7 +10,7 @@ import Container from "@mui/material/Container";
 import { createTheme, ThemeProvider } from "@mui/material/styles";
 import { Link } from "react-router-dom";
 import { Formik, Form } from "formik";
-import { ProductModel } from "../models/Product.model";
+import { ProductModel } from "./models/Product.model";
 import { productValidationSchema } from "../validationSchemas/product.schema";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";

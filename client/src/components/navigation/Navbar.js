@@ -17,7 +17,7 @@ import { UserContext } from "../../use-context/UserContext";
 
 const authenticatedPages = [
   "Products",
-  "Pricing",
+  "Purchases",
   "Dashboard",
   "Create Product"
 ];
