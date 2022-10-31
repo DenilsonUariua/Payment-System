@@ -3,7 +3,6 @@ import Button from "@mui/material/Button";
 import Typography from "@mui/material/Typography";
 import Layout from "./Layout";
 import { Link } from "react-router-dom";
-// import userContext from "@use-context/UserContext";
 import { UserContext } from "@context";
 
 const backgroundImage =

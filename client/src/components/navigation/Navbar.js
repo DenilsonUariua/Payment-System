@@ -28,7 +28,7 @@ const settingsUnathenticaed = ["Home", "Signin", "Signup"];
 export const Navbar = () => {
   const [anchorElNav, setAnchorElNav] = useState(null);
   const [anchorElUser, setAnchorElUser] = useState(null);
-  const { user, setUser } = useContext(UserContext);
+  const { user } = useContext(UserContext);
 
   const handleOpenNavMenu = (event) => {
     setAnchorElNav(event.currentTarget);

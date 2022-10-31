@@ -15,12 +15,6 @@ export const PurchaseRequest = () => {
   const [selectedRows, setSelectedRows] = useState([]);
   const [toggleCleared, setToggleCleared] = useState(false);
   const [data, setData] = useState(undefined);
-  const [open, setOpen] = useState(false);
-  const [selectedPurchase, setSelectedPurchase] = useState(undefined);
-
-  const handleClickOpen = () => {
-    setOpen(true);
-  };
 
   const handlecConfirmation = (purchase) => {
     axios
@@ -33,21 +27,16 @@ export const PurchaseRequest = () => {
         console.log(err);
       });
   };
-const handleRejection = (purchase) => {
+  const handleRejection = (purchase) => {
     axios
-        .get(`${REACT_APP_AUTH_API_URL}/purchases/reject/${purchase._id}`)
-        .then((res) => {
-            console.log(res);
-            getData();
-        })
-        .catch((err) => {
-            console.log(err);
-        });
-};
-
-  const handleClose = (value) => {
-    setOpen(false);
-    setSelectedPurchase(value);
+      .get(`${REACT_APP_AUTH_API_URL}/purchases/reject/${purchase._id}`)
+      .then((res) => {
+        console.log(res);
+        getData();
+      })
+      .catch((err) => {
+        console.log(err);
+      });
   };
 
   function getData() {
@@ -106,17 +95,17 @@ const handleRejection = (purchase) => {
     {
       name: "Buyer Id",
       selector: (row) => row.buyerId,
-      sortable: true,
+      sortable: true
     },
     {
       name: "Purchase Id",
       selector: (row) => row.purchaseId,
-      sortable: true,
+      sortable: true
     },
     {
       name: "Status",
       selector: (row) => row.status,
-      sortable: true,
+      sortable: true
     },
     {
       name: "Actions",
@@ -127,7 +116,6 @@ const handleRejection = (purchase) => {
               <Button
                 variant="outlined"
                 onClick={() => {
-                  setSelectedPurchase(row);
                   handlecConfirmation(row);
                 }}
               >
@@ -138,7 +126,6 @@ const handleRejection = (purchase) => {
               <Button
                 variant="contained"
                 onClick={() => {
-                  setSelectedPurchase(row);
                   handleRejection(row);
                 }}
               >
@@ -148,8 +135,8 @@ const handleRejection = (purchase) => {
           </Grid>
         </Fragment>
       ),
-      sortable: true,
-    },
+      sortable: true
+    }
   ];
 
   return (
@@ -159,7 +146,7 @@ const handleRejection = (purchase) => {
         maxWidth="lg"
         style={{
           marginTop: "5%",
-          boxShadow: "0 0 16px 0 rgba(0,0,0,0.7)",
+          boxShadow: "0 0 16px 0 rgba(0,0,0,0.7)"
         }}
       >
         <DataTable

@@ -40,7 +40,7 @@ const theme = createTheme();
 
 export function SignIn() {
   const navigate = useNavigate();
-  const { user, setUser } = useContext(UserContext);
+  const { setUser } = useContext(UserContext);
 
   return (
     <ThemeProvider theme={theme}>
