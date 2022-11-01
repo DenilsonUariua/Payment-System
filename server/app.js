@@ -169,6 +169,20 @@ app.route("/purchases/confirm/:id").get((req, res) => {
     }
   );
 });
+app.route("/purchases/pay/:id").get((req, res) => {
+  Purchase.findOneAndUpdate(
+    { _id: req.params.id },
+    { status: "Paid Awaiting Delivery" },
+    (err, docs) => {
+      if (err) {
+        console.log("Error: ", err);
+      } else {
+        console.log("Success: ", docs);
+        res.status(200).send(docs);
+      }
+    }
+  );
+});
 app.route("/purchases/reject/:id").get((req, res) => {
   Purchase.findOneAndDelete({ _id: req.params.id }, (err, docs) => {
     if (err) {

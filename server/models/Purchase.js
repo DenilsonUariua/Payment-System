@@ -20,7 +20,7 @@ const purchaseSchema = mongoose.Schema({
   },
   status: {
     type: String,
-    enum: ["Pending", "Completed", "Cancelled", "Verified"],
+    enum: ["Pending", "Completed", "Cancelled", "Verified", "Paid Awaiting Delivery"],
     default: "Pending"
   },
   productId: {
