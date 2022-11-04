@@ -21,15 +21,15 @@ const sessionMiddleware = session({
   resave: false,
   saveUninitialized: false,
   cookie: {
-    expires: 600000,
-  },
+    expires: 600000
+  }
 });
 const app = express();
 app.use(
   cors({
     origin: ["http://localhost:3000"],
     methods: ["GET,HEAD,PUT,PATCH,POST,DELETE"],
-    credentials: true,
+    credentials: true
   })
 );
 const httpServer = createServer(app);
@@ -83,7 +83,7 @@ app.post("/login", sessionChecker, async (req, res) => {
           lastName: user.lastName,
           email: user.email,
           buyerId: user.buyerId,
-          sellerId: user.sellerId,
+          sellerId: user.sellerId
         });
       }
     });
@@ -111,7 +111,7 @@ app
       email: req.body.email,
       password: req.body.password,
       buyerId: buyerId,
-      sellerId: sellerId,
+      sellerId: sellerId
     });
     user.save(async (err, docs) => {
       if (err) {
@@ -125,7 +125,7 @@ app
           lastName: docs.lastName,
           email: docs.email,
           buyerId: docs.buyerId,
-          sellerId: docs.sellerId,
+          sellerId: docs.sellerId
         });
       }
     });
@@ -242,6 +242,17 @@ app.route("/purchase").post((req, res) => {
   });
 });
 
+app.route("/purchases/:id").get((req, res) => {
+  Purchase.find({ buyerId: req.params.id }, (err, docs) => {
+    if (err) {
+      console.log("Error: ", err);
+      res.status(500).send("Error fetching products");
+    } else {
+      console.log("Success: ", docs);
+      res.status(200).send(docs);
+    }
+  });
+});
 app.route("/product").post((req, res) => {
   console.log("req.body", req.body);
   let product = new Product({
@@ -249,7 +260,7 @@ app.route("/product").post((req, res) => {
     price: req.body.price,
     description: req.body.description,
     image: req.body.image,
-    sellerId: req.body.sellerId,
+    sellerId: req.body.sellerId
   });
   product.save(async (err, docs) => {
     if (err) {
@@ -265,8 +276,8 @@ app.route("/product").post((req, res) => {
 const io = new Server(httpServer, {
   cors: {
     origin: "http://localhost:3000",
-    methods: ["GET", "POST"],
-  },
+    methods: ["GET", "POST"]
+  }
 });
 httpServer.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
