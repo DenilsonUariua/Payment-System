@@ -14,6 +14,9 @@ import { userModel } from "./models/userModel";
 import { useNavigate } from "react-router-dom";
 import { UserContext } from "../../use-context/UserContext";
 import { Notification } from "@helpers/notifications";
+import { signinValidationSchema } from "./validationSchemas/signin.schema";
+import { EP_TEXTFIELD } from "@helpers/form";
+
 import axios from "axios";
 // get api url
 const { REACT_APP_AUTH_API_URL } = process.env;
@@ -28,7 +31,7 @@ function Copyright(props) {
     >
       {"Copyright © "}
       <Link color="inherit" href="https://mui.com/">
-        Your Website
+        Kanry Payment
       </Link>{" "}
       {new Date().getFullYear()}
       {"."}
@@ -48,7 +51,7 @@ export function SignIn() {
         component="main"
         maxWidth="xs"
         style={{
-          boxShadow: "0 0 16px 0 rgba(0,0,0,0.7)",
+          boxShadow: "0 0 16px 0 rgba(0,0,0,0.7)"
         }}
       >
         <CssBaseline />
@@ -57,7 +60,7 @@ export function SignIn() {
             marginTop: 8,
             display: "flex",
             flexDirection: "column",
-            alignItems: "center",
+            alignItems: "center"
           }}
         >
           <Avatar sx={{ m: 1, bgcolor: "primary.main" }}></Avatar>
@@ -66,17 +69,9 @@ export function SignIn() {
           </Typography>
           <Formik
             initialValues={userModel}
-            validate={(values) => {
-              const errors = {};
-              if (!values.email) {
-                errors.email = "Required";
-              } else if (
-                !/^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i.test(values.email)
-              ) {
-                errors.email = "Invalid email address";
-              }
-              return errors;
-            }}
+            validationSchema={signinValidationSchema}
+            validateOnChange={true}
+            validateOnBlur={true}
             onSubmit={(values, { setSubmitting }) => {
               axios
                 .post(`${REACT_APP_AUTH_API_URL}/login`, values)
@@ -102,35 +97,34 @@ export function SignIn() {
               handleChange,
               handleBlur,
               handleSubmit,
-              isSubmitting,
+              isSubmitting
               /* and other goodies */
             }) => (
               <Form onSubmit={handleSubmit}>
-                <TextField
-                  margin="normal"
-                  required
-                  fullWidth
-                  id="email"
-                  label="Email Address"
-                  onChange={handleChange}
-                  onBlur={handleBlur}
+                <EP_TEXTFIELD
+                  width={12}
                   name="email"
-                  autoComplete="email"
-                  autoFocus
+                  required={true}
+                  handleChange={handleChange}
+                  handleBlur={handleBlur}
+                  label="Email Address"
+                  errors={errors}
+                  touched={touched}
                   value={values.email}
+                  disabled={isSubmitting}
                 />
-                <TextField
-                  margin="normal"
-                  required
-                  fullWidth
+                {/* add space */}
+                <Box sx={{ mt: 1 }} />
+                <EP_TEXTFIELD
                   name="password"
-                  onChange={handleChange}
-                  onBlur={handleBlur}
+                  required={true}
+                  handleChange={handleChange}
+                  handleBlur={handleBlur}
                   label="Password"
-                  type="password"
-                  id="password"
-                  autoComplete="current-password"
+                  errors={errors}
+                  touched={touched}
                   value={values.password}
+                  disabled={isSubmitting}
                 />
                 <Button
                   type="submit"

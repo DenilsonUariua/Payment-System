@@ -19,7 +19,8 @@ export function EP_TEXTFIELD(props) {
     styles = {},
     type = "text",
     autoComplete,
-    fullWidth = true
+    fullWidth = true,
+    width = 6,
   } = props;
 
   const isErrored = !!(
@@ -45,7 +46,7 @@ export function EP_TEXTFIELD(props) {
     return o;
   };
   return (
-    <Grid item xs={12} sm={6}>
+    <Grid item xs={12} sm={width}>
       <FormGroup>
         <TextField
           style={style}

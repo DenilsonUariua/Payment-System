@@ -15,6 +15,8 @@ import { userModel } from "./models/userModel";
 import { useNavigate } from "react-router-dom";
 import { UserContext } from "../../use-context/UserContext";
 import { Notification } from "@helpers/notifications";
+import { signupValidationSchema } from "./validationSchemas/signup.schema";
+import { EP_TEXTFIELD } from "@helpers/form";
 import axios from "axios";
 
 // socket io
@@ -31,7 +33,7 @@ function Copyright(props) {
       {...props}
     >
       {"Copyright © "}
-      <Link to={"/"}>Your Website</Link> {new Date().getFullYear()}
+      <Link to={"/"}>Kanry Payment</Link> {new Date().getFullYear()}
       {"."}
     </Typography>
   );
@@ -49,7 +51,7 @@ export function SignUp() {
         component="main"
         maxWidth="xs"
         style={{
-          boxShadow: "0 0 16px 0 rgba(0,0,0,0.7)",
+          boxShadow: "0 0 16px 0 rgba(0,0,0,0.7)"
         }}
       >
         <CssBaseline />
@@ -58,7 +60,7 @@ export function SignUp() {
             marginTop: 8,
             display: "flex",
             flexDirection: "column",
-            alignItems: "center",
+            alignItems: "center"
           }}
         >
           <Avatar sx={{ m: 1, bgcolor: "primary.main" }}>
@@ -70,17 +72,9 @@ export function SignUp() {
 
           <Formik
             initialValues={userModel}
-            validate={(values) => {
-              const errors = {};
-              if (!values.email) {
-                errors.email = "Required";
-              } else if (
-                !/^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i.test(values.email)
-              ) {
-                errors.email = "Invalid email address";
-              }
-              return errors;
-            }}
+            validationSchema={signupValidationSchema}
+            validateOnChange={true}
+            validateOnBlur={true}
             onSubmit={(values, { setSubmitting }) => {
               // submit data to api
               axios
@@ -106,65 +100,57 @@ export function SignUp() {
               handleChange,
               handleBlur,
               handleSubmit,
-              isSubmitting,
+              isSubmitting
               /* and other goodies */
             }) => (
               <Form onSubmit={handleSubmit}>
                 <Grid container spacing={2}>
-                  <Grid item xs={12} sm={6}>
-                    <TextField
-                      autoComplete="given-name"
-                      name="firstName"
-                      required
-                      fullWidth
-                      id="firstName"
-                      onChange={handleChange}
-                      onBlur={handleBlur}
-                      label="First Name"
-                      value={values.firstName}
-                      autoFocus
-                    />
-                  </Grid>
-                  <Grid item xs={12} sm={6}>
-                    <TextField
-                      required
-                      fullWidth
-                      id="lastName"
-                      label="Last Name"
-                      onChange={handleChange}
-                      onBlur={handleBlur}
-                      name="lastName"
-                      value={values.lastName}
-                      autoComplete="family-name"
-                    />
-                  </Grid>
-                  <Grid item xs={12}>
-                    <TextField
-                      required
-                      fullWidth
-                      id="email"
-                      onChange={handleChange}
-                      onBlur={handleBlur}
-                      label="Email Address"
-                      name="email"
-                      autoComplete="email"
-                      value={values.email}
-                    />
-                  </Grid>
-                  <Grid item xs={12}>
-                    <TextField
-                      required
-                      fullWidth
-                      name="password"
-                      label="Password"
-                      type="password"
-                      id="password"
-                      onChange={handleChange}
-                      onBlur={handleBlur}
-                      autoComplete="new-password"
-                      value={values.password}
-                    />
-                  </Grid>
+                  <EP_TEXTFIELD
+                    name="firstName"
+                    required={true}
+                    handleChange={handleChange}
+                    handleBlur={handleBlur}
+                    label="First Name"
+                    errors={errors}
+                    touched={touched}
+                    value={values.firstName}
+                    disabled={isSubmitting}
+                  />
+                  <EP_TEXTFIELD
+                    name="lastName"
+                    required={true}
+                    handleChange={handleChange}
+                    handleBlur={handleBlur}
+                    label="Last Name"
+                    errors={errors}
+                    touched={touched}
+                    value={values.lastName}
+                    disabled={isSubmitting}
+                  />
+                  <EP_TEXTFIELD
+                    width={12}
+                    name="email"
+                    required={true}
+                    handleChange={handleChange}
+                    handleBlur={handleBlur}
+                    label="Email Address"
+                    errors={errors}
+                    touched={touched}
+                    value={values.email}
+                    disabled={isSubmitting}
+                  />
+                  <EP_TEXTFIELD
+                    width={12}
+                    name="password"
+                    required={true}
+                    handleChange={handleChange}
+                    handleBlur={handleBlur}
+                    label="Password"
+                    errors={errors}
+                    touched={touched}
+                    value={values.password}
+                    disabled={isSubmitting}
+                  />
                 </Grid>
                 <Button
                   type="submit"

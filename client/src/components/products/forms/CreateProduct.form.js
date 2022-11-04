@@ -31,7 +31,7 @@ function Copyright(props) {
       {...props}
     >
       {"Copyright © "}
-      <Link to={"/"}>Your Website</Link> {new Date().getFullYear()}
+      <Link to={"/"}>Kanry Payment</Link> {new Date().getFullYear()}
       {"."}
     </Typography>
   );
