@@ -1,4 +1,4 @@
-import React, {useEffect, useContext} from "react";
+import React, { useEffect, useContext, useState } from "react";
 import Link from "@mui/material/Link";
 import Table from "@mui/material/Table";
 import TableBody from "@mui/material/TableBody";
@@ -11,97 +11,52 @@ import { UserContext } from "@context";
 // get api url
 const { REACT_APP_AUTH_API_URL } = process.env;
 
-// Generate Order Data
-function createData(id, date, name, shipTo, paymentMethod, amount) {
-  return { id, date, name, shipTo, paymentMethod, amount };
-}
-
-const rows = [
-  createData(
-    0,
-    "16 Mar, 2019",
-    "Elvis Presley",
-    "Tupelo, MS",
-    "VISA ⠀•••• 3719",
-    312.44
-  ),
-  createData(
-    1,
-    "16 Mar, 2019",
-    "Paul McCartney",
-    "London, UK",
-    "VISA ⠀•••• 2574",
-    866.99
-  ),
-  createData(
-    2,
-    "16 Mar, 2019",
-    "Tom Scholz",
-    "Boston, MA",
-    "MC ⠀•••• 1253",
-    100.81
-  ),
-  createData(
-    3,
-    "16 Mar, 2019",
-    "Michael Jackson",
-    "Gary, IN",
-    "AMEX ⠀•••• 2000",
-    654.39
-  ),
-  createData(
-    4,
-    "15 Mar, 2019",
-    "Bruce Springsteen",
-    "Long Branch, NJ",
-    "VISA ⠀•••• 5919",
-    212.79
-  )
-];
-
-function preventDefault(event) {
-  event.preventDefault();
-}
 
 export default function Orders() {
   const { user } = useContext(UserContext);
-  console.log('user', user);
+  const [loading, setLoading] = useState(true);
+  const [products, setProducts] = useState([]);
   useEffect(() => {
-    axios
-      .get(`${REACT_APP_AUTH_API_URL}/purchases`)
+    user && axios
+      .get(`${REACT_APP_AUTH_API_URL}/user-purchases/${user.buyerId}`)
       .then((res) => {
-        console.log(res.data);
+        setProducts(res.data);
+        setLoading(false);
       })
       .catch((err) => {
         console.log(err);
       });
-  }, []);
+  }, [user]);
 
   return (
-    <React.Fragment>
-      <Title>Recent Orders</Title>
-      <Table size="small">
-        <TableHead>
-          <TableRow>
-            <TableCell>Date</TableCell>
-            <TableCell>Name</TableCell>
-            <TableCell>Ship To</TableCell>
-            <TableCell>Payment Method</TableCell>
-            <TableCell align="right">Sale Amount</TableCell>
-          </TableRow>
-        </TableHead>
-        <TableBody>
-          {rows.map((row) => (
-            <TableRow key={row.id}>
-              <TableCell>{row.date}</TableCell>
-              <TableCell>{row.name}</TableCell>
-              <TableCell>{row.shipTo}</TableCell>
-              <TableCell>{row.paymentMethod}</TableCell>
-              <TableCell align="right">{`$${row.amount}`}</TableCell>
+    !loading ? (
+      <React.Fragment>
+        <Title>Purchases</Title>
+        <Table size="small">
+          <TableHead>
+            <TableRow>
+              <TableCell>Seller ID</TableCell>
+              <TableCell>Product Name</TableCell>
+              <TableCell>Purchase ID</TableCell>
+              <TableCell>Description</TableCell>
+              <TableCell align="right">Sale Amount</TableCell>
+              <TableCell>Status</TableCell>
             </TableRow>
-          ))}
-        </TableBody>
-      </Table>
-    </React.Fragment>
+          </TableHead>
+          <TableBody>
+            {products.map((row) => (
+              <TableRow key={row._id}>
+                <TableCell>{row.sellerId}</TableCell>
+                <TableCell>{row.productId.name}</TableCell>
+                <TableCell>{row.purchaseId}</TableCell>
+                <TableCell>{row.productId.description}</TableCell>
+                <TableCell align="right">{`${row.productId.price}`}</TableCell>
+                <TableCell>{`${row.productId.status}`}</TableCell>
+              </TableRow>
+            ))}
+          </TableBody>
+        </Table>
+      </React.Fragment>
+    ): "Loading..."
   );
 }

@@ -143,17 +143,28 @@ app.route("/products").get((req, res) => {
   });
 });
 app.route("/purchases/buyer/:id").get((req, res) => {
-  Purchase.find({ buyerId: req.params.id }, (err, docs) => {
-    if (err) {
-      console.log("Error: ", err);
-      res.status(500).send("Error fetching products");
-    } else {
+  Purchase.find({ buyerId: req.params.id })
+    .populate("productId")
+    .then((docs) => {
       console.log("Success: ", docs);
-
       const verified = docs.filter((doc) => doc.status === "Verified");
       res.status(200).send(verified);
-    }
-  });
+    })
+    .catch((err) => {
+      console.log("Error: ", err);
+      res.status(500).send("Error fetching purchases");
+    });
+});
+app.route("/user-purchases/:id").get((req, res) => {
+  Purchase.find({ buyerId: req.params.id })
+    .populate("productId")
+    .then((docs) => {
+      res.status(200).send(docs);
+    })
+    .catch((err) => {
+      console.log("Error: ", err);
+      res.status(500).send("Error fetching purchases");
+    });
 });
 app.route("/purchases/confirm/:id").get((req, res) => {
   Purchase.findOneAndUpdate(
@@ -163,8 +174,19 @@ app.route("/purchases/confirm/:id").get((req, res) => {
       if (err) {
         console.log("Error: ", err);
       } else {
-        console.log("Success: ", docs);
-        res.status(200).send(docs);
+        Product.findOneAndUpdate(
+          { _id: docs.productId },
+          { status: "Verified" },
+          (err, product) => {
+            if (err) {
+              res.status(500);
+              console.log("Error: ", err);
+            } else {
+              res.status(200).send(docs);
+              console.log("Success: ", product);
+            }
+          }
+        );
       }
     }
   );
@@ -177,12 +199,24 @@ app.route("/purchases/pay/:id").get((req, res) => {
       if (err) {
         console.log("Error: ", err);
       } else {
-        console.log("Success: ", docs);
-        res.status(200).send(docs);
+        Product.findOneAndUpdate(
+          { _id: docs.productId },
+          { status: "Paid Awaiting Delivery" },
+          (err, product) => {
+            if (err) {
+              res.status(500);
+              console.log("Error: ", err);
+            } else {
+              res.status(200).send(docs);
+              console.log("Success: ", product);
+            }
+          }
+        );
       }
     }
   );
 });
+
 app.route("/purchases/reject/:id").get((req, res) => {
   Purchase.findOneAndDelete({ _id: req.params.id }, (err, docs) => {
     if (err) {

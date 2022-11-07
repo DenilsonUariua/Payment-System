@@ -17,27 +17,21 @@ export const UserPurchases = () => {
   const [selectedRows, setSelectedRows] = useState([]);
   const [toggleCleared, setToggleCleared] = useState(false);
   const [data, setData] = useState(undefined);
-  // const [open, setOpen] = useState(false);
-  // const [selectedProduct, setSelectedProduct] = useState(undefined);
 
-  // const handleClickOpen = () => {
-  //   setOpen(true);
-  // };
-
+  function getData() {
+    user && console.log("user", user);
+    user &&
+      axios
+        .get(`${REACT_APP_AUTH_API_URL}/purchases/buyer/${user.buyerId}`)
+        .then((res) => {
+          setData(res.data);
+        })
+        .catch((err) => {
+          console.log(err);
+        });
+  }
   // fetch products from api
   useEffect(() => {
-    function getData() {
-      user && console.log("user", user);
-      user &&
-        axios
-          .get(`${REACT_APP_AUTH_API_URL}/purchases/buyer/${user.buyerId}`)
-          .then((res) => {
-            setData(res.data);
-          })
-          .catch((err) => {
-            console.log(err);
-          });
-    }
     getData();
     return () => {
       setData(undefined);
@@ -47,6 +41,18 @@ export const UserPurchases = () => {
   const handleRowSelected = React.useCallback((state) => {
     setSelectedRows(state.selectedRows);
   }, []);
+
+  const handlePayment = (purchase) => {
+    axios
+      .get(`${REACT_APP_AUTH_API_URL}/purchases/pay/${purchase._id}`)
+      .then((res) => {
+        console.log("res", res);
+        getData();
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  };
 
   const contextActions = React.useMemo(() => {
     const handleDelete = () => {
@@ -97,17 +103,15 @@ export const UserPurchases = () => {
       name: "Actions",
       selector: (row) => (
         <Fragment>
-          <Link>
-            <Button
-              variant="outlined"
-              onClick={() => {
-                // setSelectedProduct(row);
-                // handleClickOpen();
-              }}
-            >
-              PAY
-            </Button>
-          </Link>
+          <Button
+            variant="outlined"
+            onClick={() => {
+              console.log("row", row);
+              handlePayment(row);
+            }}
+          >
+            PAY
+          </Button>
         </Fragment>
       ),
       sortable: true

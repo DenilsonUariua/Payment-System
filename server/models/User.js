@@ -5,30 +5,33 @@ const { MONGODB_URI } = process.env;
 
 mongoose.connect(MONGODB_URI, {
   useNewUrlParser: true,
-  useUnifiedTopology: true,
+  useUnifiedTopology: true
 });
 
-const userSchema = mongoose.Schema({
-  firstName: String,
-  lastName: String,
-  email: {
-    type: String,
-    unique: true,
-    required: true,
+const userSchema = mongoose.Schema(
+  {
+    firstName: String,
+    lastName: String,
+    email: {
+      type: String,
+      unique: true,
+      required: true
+    },
+    password: {
+      type: String,
+      required: true
+    },
+    sellerId: {
+      type: String,
+      required: true
+    },
+    buyerId: {
+      type: String,
+      required: true
+    }
   },
-  password: {
-    type: String,
-    required: true,
-  },
-  sellerId: {
-    type: String,
-    required: true
-  },
-  buyerId: {
-    type: String,
-    required: true
-  },
-});
+  { timestamps: true }
+);
 
 userSchema.pre("save", function (next) {
   if (!this.isModified("password")) {
