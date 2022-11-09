@@ -9,8 +9,14 @@ import { Pricing, Products } from "@products";
 import { Purchases } from "@purchases";
 import { UserContext } from "./use-context/UserContext";
 import { io } from "socket.io-client";
-const { REACT_APP_AUTH_API_URL } = process.env;
-const socket = io(REACT_APP_AUTH_API_URL);
+const {
+  REACT_APP_AUTH_API_URL_PRODUCTION,
+  REACT_APP_AUTH_API_URL_DEVELOPMENT,
+  NODE_ENV,
+} = process.env;
+const socket = io(NODE_ENV === "production"
+? REACT_APP_AUTH_API_URL_PRODUCTION
+: REACT_APP_AUTH_API_URL_DEVELOPMENT);
 
 function App() {
   const [user, setUser] = useState(null);

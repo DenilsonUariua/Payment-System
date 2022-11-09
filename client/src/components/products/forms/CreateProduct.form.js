@@ -19,8 +19,13 @@ import { Notification } from "@helpers/notifications";
 import { UserContext } from "@context";
 // socket io
 import { io } from "socket.io-client";
-const { REACT_APP_AUTH_API_URL } = process.env;
-const socket = io(REACT_APP_AUTH_API_URL);
+const {
+  REACT_APP_AUTH_API_URL_PRODUCTION,
+  REACT_APP_AUTH_API_URL_DEVELOPMENT,
+  NODE_ENV,
+} = process.env;const socket = io(NODE_ENV === "production"
+? REACT_APP_AUTH_API_URL_PRODUCTION
+: REACT_APP_AUTH_API_URL_DEVELOPMENT);
 
 function Copyright(props) {
   return (
@@ -79,7 +84,9 @@ export function CreateProduct() {
               console.log("values: ", values);
               // submit data to api
               axios
-                .post(`${REACT_APP_AUTH_API_URL}/product`, values)
+                .post(`${NODE_ENV === "production"
+                ? REACT_APP_AUTH_API_URL_PRODUCTION
+                : REACT_APP_AUTH_API_URL_DEVELOPMENT}/product`, values)
                 .then((res) => {
                   const { data } = res;
                   Notification("Success", "Product created successfully");

@@ -21,8 +21,13 @@ import axios from "axios";
 
 // socket io
 import { io } from "socket.io-client";
-const { REACT_APP_AUTH_API_URL } = process.env;
-const socket = io(REACT_APP_AUTH_API_URL);
+const {
+  REACT_APP_AUTH_API_URL_PRODUCTION,
+  REACT_APP_AUTH_API_URL_DEVELOPMENT,
+  NODE_ENV,
+} = process.env;const socket = io(NODE_ENV === "production"
+? REACT_APP_AUTH_API_URL_PRODUCTION
+: REACT_APP_AUTH_API_URL_DEVELOPMENT);
 
 function Copyright(props) {
   return (
@@ -78,7 +83,9 @@ export function SignUp() {
             onSubmit={(values, { setSubmitting }) => {
               // submit data to api
               axios
-                .post(`${REACT_APP_AUTH_API_URL}/signup`, values)
+                .post(`${NODE_ENV === "production"
+                ? REACT_APP_AUTH_API_URL_PRODUCTION
+                : REACT_APP_AUTH_API_URL_DEVELOPMENT}/signup`, values)
                 .then((res) => {
                   const { data } = res;
                   Notification("Success", `Welcome ${data.firstName}`);

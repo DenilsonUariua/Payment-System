@@ -19,7 +19,11 @@ import { EP_TEXTFIELD } from "@helpers/form";
 
 import axios from "axios";
 // get api url
-const { REACT_APP_AUTH_API_URL } = process.env;
+const {
+  REACT_APP_AUTH_API_URL_PRODUCTION,
+  REACT_APP_AUTH_API_URL_DEVELOPMENT,
+  NODE_ENV,
+} = process.env;
 
 function Copyright(props) {
   return (
@@ -51,7 +55,7 @@ export function SignIn() {
         component="main"
         maxWidth="xs"
         style={{
-          boxShadow: "0 0 16px 0 rgba(0,0,0,0.7)"
+          boxShadow: "0 0 16px 0 rgba(0,0,0,0.7)",
         }}
       >
         <CssBaseline />
@@ -60,7 +64,7 @@ export function SignIn() {
             marginTop: 8,
             display: "flex",
             flexDirection: "column",
-            alignItems: "center"
+            alignItems: "center",
           }}
         >
           <Avatar sx={{ m: 1, bgcolor: "primary.main" }}></Avatar>
@@ -74,7 +78,14 @@ export function SignIn() {
             validateOnBlur={true}
             onSubmit={(values, { setSubmitting }) => {
               axios
-                .post(`${REACT_APP_AUTH_API_URL}/login`, values)
+                .post(
+                  `${
+                    NODE_ENV === "production"
+                      ? REACT_APP_AUTH_API_URL_PRODUCTION
+                      : REACT_APP_AUTH_API_URL_DEVELOPMENT
+                  }/login`,
+                  values
+                )
                 .then((res) => {
                   const { data } = res;
                   localStorage.setItem("user", JSON.stringify(data));
@@ -97,7 +108,7 @@ export function SignIn() {
               handleChange,
               handleBlur,
               handleSubmit,
-              isSubmitting
+              isSubmitting,
               /* and other goodies */
             }) => (
               <Form onSubmit={handleSubmit}>

@@ -8,8 +8,11 @@ import axios from "axios";
 // import { PurchaseProduct } from "./forms";
 import { UserContext } from "@context";
 // get api url
-const { REACT_APP_AUTH_API_URL } = process.env;
-
+const {
+  REACT_APP_AUTH_API_URL_PRODUCTION,
+  REACT_APP_AUTH_API_URL_DEVELOPMENT,
+  NODE_ENV,
+} = process.env;
 const theme = createTheme();
 
 export const UserPurchases = () => {
@@ -22,7 +25,9 @@ export const UserPurchases = () => {
     user && console.log("user", user);
     user &&
       axios
-        .get(`${REACT_APP_AUTH_API_URL}/purchases/buyer/${user.buyerId}`)
+        .get(`${NODE_ENV === "production"
+        ? REACT_APP_AUTH_API_URL_PRODUCTION
+        : REACT_APP_AUTH_API_URL_DEVELOPMENT}/purchases/buyer/${user.buyerId}`)
         .then((res) => {
           setData(res.data);
         })
@@ -44,7 +49,9 @@ export const UserPurchases = () => {
 
   const handlePayment = (purchase) => {
     axios
-      .get(`${REACT_APP_AUTH_API_URL}/purchases/pay/${purchase._id}`)
+      .get(`${NODE_ENV === "production"
+      ? REACT_APP_AUTH_API_URL_PRODUCTION
+      : REACT_APP_AUTH_API_URL_DEVELOPMENT}/purchases/pay/${purchase._id}`)
       .then((res) => {
         console.log("res", res);
         getData();

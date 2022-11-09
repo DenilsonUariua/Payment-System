@@ -10,8 +10,11 @@ import { UserContext } from "@context";
 
 import axios from "axios";
 
-const { REACT_APP_AUTH_API_URL } = process.env;
-
+const {
+  REACT_APP_AUTH_API_URL_PRODUCTION,
+  REACT_APP_AUTH_API_URL_DEVELOPMENT,
+  NODE_ENV,
+} = process.env;
 export function PurchaseProduct(props) {
   const { onClose, selectedProduct, open, getData } = props;
   const { user } = useContext(UserContext);
@@ -22,7 +25,9 @@ export function PurchaseProduct(props) {
   };
   const handlePurchase = () => {
     axios
-      .post(`${REACT_APP_AUTH_API_URL}/purchase`, {
+      .post(`${NODE_ENV === "production"
+      ? REACT_APP_AUTH_API_URL_PRODUCTION
+      : REACT_APP_AUTH_API_URL_DEVELOPMENT}/purchase`, {
         buyerId: user.buyerId,
         sellerId: selectedProduct.sellerId,
         productId: selectedProduct._id,

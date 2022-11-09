@@ -9,8 +9,11 @@ import Title from "./Title";
 import axios from "axios";
 import { UserContext } from "@context";
 // get api url
-const { REACT_APP_AUTH_API_URL } = process.env;
-
+const {
+  REACT_APP_AUTH_API_URL_PRODUCTION,
+  REACT_APP_AUTH_API_URL_DEVELOPMENT,
+  NODE_ENV,
+} = process.env;
 
 export default function Orders() {
   const { user } = useContext(UserContext);
@@ -18,7 +21,9 @@ export default function Orders() {
   const [products, setProducts] = useState([]);
   useEffect(() => {
     user && axios
-      .get(`${REACT_APP_AUTH_API_URL}/user-purchases/${user.buyerId}`)
+      .get(`${NODE_ENV === "production"
+      ? REACT_APP_AUTH_API_URL_PRODUCTION
+      : REACT_APP_AUTH_API_URL_DEVELOPMENT}/user-purchases/${user.buyerId}`)
       .then((res) => {
         setProducts(res.data);
         setLoading(false);

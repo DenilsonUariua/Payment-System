@@ -6,8 +6,11 @@ import { createTheme, ThemeProvider } from "@mui/material/styles";
 import Grid from "@mui/material/Grid";
 import axios from "axios";
 import { UserContext } from "@context";
-const { REACT_APP_AUTH_API_URL } = process.env;
-
+const {
+  REACT_APP_AUTH_API_URL_PRODUCTION,
+  REACT_APP_AUTH_API_URL_DEVELOPMENT,
+  NODE_ENV,
+} = process.env;
 const theme = createTheme();
 
 export const PurchaseRequest = () => {
@@ -18,7 +21,9 @@ export const PurchaseRequest = () => {
 
   const handlecConfirmation = (purchase) => {
     axios
-      .get(`${REACT_APP_AUTH_API_URL}/purchases/confirm/${purchase._id}`)
+      .get(`${NODE_ENV === "production"
+      ? REACT_APP_AUTH_API_URL_PRODUCTION
+      : REACT_APP_AUTH_API_URL_DEVELOPMENT}/purchases/confirm/${purchase._id}`)
       .then((res) => {
         console.log(res);
         getData();
@@ -29,7 +34,9 @@ export const PurchaseRequest = () => {
   };
   const handleRejection = (purchase) => {
     axios
-      .get(`${REACT_APP_AUTH_API_URL}/purchases/reject/${purchase._id}`)
+      .get(`${NODE_ENV === "production"
+      ? REACT_APP_AUTH_API_URL_PRODUCTION
+      : REACT_APP_AUTH_API_URL_DEVELOPMENT}/purchases/reject/${purchase._id}`)
       .then((res) => {
         console.log(res);
         getData();
@@ -42,7 +49,9 @@ export const PurchaseRequest = () => {
   function getData() {
     user &&
       axios
-        .get(`${REACT_APP_AUTH_API_URL}/purchases/seller/${user.sellerId}`)
+        .get(`${NODE_ENV === "production"
+        ? REACT_APP_AUTH_API_URL_PRODUCTION
+        : REACT_APP_AUTH_API_URL_DEVELOPMENT}/purchases/seller/${user.sellerId}`)
         .then((res) => {
           setData(res.data);
         })

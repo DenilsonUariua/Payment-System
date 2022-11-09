@@ -7,8 +7,11 @@ import { Link } from "react-router-dom";
 import axios from "axios";
 import { PurchaseProduct } from "./forms";
 // get api url
-const { REACT_APP_AUTH_API_URL } = process.env;
-
+const {
+  REACT_APP_AUTH_API_URL_PRODUCTION,
+  REACT_APP_AUTH_API_URL_DEVELOPMENT,
+  NODE_ENV,
+} = process.env;
 const theme = createTheme();
 
 export const Products = () => {
@@ -30,7 +33,9 @@ export const Products = () => {
   
   function getData() {
     axios
-      .get(`${REACT_APP_AUTH_API_URL}/products`)
+      .get(`${NODE_ENV === "production"
+      ? REACT_APP_AUTH_API_URL_PRODUCTION
+      : REACT_APP_AUTH_API_URL_DEVELOPMENT}/products`)
       .then((res) => {
         setData(res.data);
       })
