@@ -1,0 +1,17 @@
+{
+  "compilerOptions": {
+    "baseUrl": ".",
+    "paths": {
+      "example/*": ["example/src/*"],
+      "@library/*": ["library/src/*"],
+      "@navigation": ["src/components/navigation"],
+      "@pages": ["src/components/pages"],
+      "@products": ["src/components/products"],
+      "@authentication": ["src/components/authentication"],
+      "@helpers": ["src/helpers"],
+      "@assets": ["src/assets"],
+      "@context": ["src/use-context"],
+      "@purchases": ["src/components/purchases"]
+    }
+  }
+}

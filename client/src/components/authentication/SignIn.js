@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import { useContext } from "react";
 import Avatar from "@mui/material/Avatar";
 import Button from "@mui/material/Button";
 import CssBaseline from "@mui/material/CssBaseline";
@@ -11,9 +11,15 @@ import Container from "@mui/material/Container";
 import { createTheme, ThemeProvider } from "@mui/material/styles";
 import { Formik, Form } from "formik";
 import { userModel } from "./models/userModel";
+import { useNavigate } from "react-router-dom";
+import { UserContext } from "../../use-context/UserContext";
+import { Notification } from "@helpers/notifications";
+import { signinValidationSchema } from "./validationSchemas/signin.schema";
+import { EP_TEXTFIELD } from "@helpers/form";
+
 import axios from "axios";
 // get api url
-const { REACT_APP_API_URL } = process.env;
+const { REACT_APP_AUTH_API_URL } = process.env;
 
 function Copyright(props) {
   return (
@@ -25,7 +31,7 @@ function Copyright(props) {
     >
       {"Copyright © "}
       <Link color="inherit" href="https://mui.com/">
-        Your Website
+        Kanry Payment
       </Link>{" "}
       {new Date().getFullYear()}
       {"."}
@@ -35,20 +41,9 @@ function Copyright(props) {
 
 const theme = createTheme();
 
-export default function SignIn() {
-  useEffect(() => {
-    // check if user is logged in
-    axios
-      .get(`${REACT_APP_API_URL}/login`, {
-        withCredentials: true
-      })
-      .then((res) => {
-        console.log(res);
-      })
-      .catch((err) => {
-        console.log(err);
-      });
-  }, []);
+export function SignIn() {
+  const navigate = useNavigate();
+  const { setUser } = useContext(UserContext);
 
   return (
     <ThemeProvider theme={theme}>
@@ -68,31 +63,28 @@ export default function SignIn() {
             alignItems: "center"
           }}
         >
-          <Avatar sx={{ m: 1, bgcolor: "secondary.main" }}></Avatar>
+          <Avatar sx={{ m: 1, bgcolor: "primary.main" }}></Avatar>
           <Typography component="h1" variant="h5">
             Sign in
           </Typography>
           <Formik
             initialValues={userModel}
-            validate={(values) => {
-              const errors = {};
-              if (!values.email) {
-                errors.email = "Required";
-              } else if (
-                !/^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i.test(values.email)
-              ) {
-                errors.email = "Invalid email address";
-              }
-              return errors;
-            }}
+            validationSchema={signinValidationSchema}
+            validateOnChange={true}
+            validateOnBlur={true}
             onSubmit={(values, { setSubmitting }) => {
               axios
-                .post(`${REACT_APP_API_URL}/signin`, values)
+                .post(`${REACT_APP_AUTH_API_URL}/login`, values)
                 .then((res) => {
-                  console.log(res);
+                  const { data } = res;
+                  localStorage.setItem("user", JSON.stringify(data));
+                  setUser(data);
+                  Notification("Success", `Welcome back ${data.firstName}`);
                   setSubmitting(false);
+                  navigate("/products", { state: { data } }, { replace: true });
                 })
                 .catch((err) => {
+                  Notification("Error", `Incorrect email or password`);
                   console.log(err);
                   setSubmitting(false);
                 });
@@ -108,32 +100,31 @@ export default function SignIn() {
               isSubmitting
               /* and other goodies */
             }) => (
-              <Form>
-                <TextField
-                  margin="normal"
-                  required
-                  fullWidth
-                  id="email"
-                  label="Email Address"
-                  onChange={handleChange}
-                  onBlur={handleBlur}
+              <Form onSubmit={handleSubmit}>
+                <EP_TEXTFIELD
+                  width={12}
                   name="email"
-                  autoComplete="email"
-                  autoFocus
+                  required={true}
+                  handleChange={handleChange}
+                  handleBlur={handleBlur}
+                  label="Email Address"
+                  errors={errors}
+                  touched={touched}
                   value={values.email}
+                  disabled={isSubmitting}
                 />
-                <TextField
-                  margin="normal"
-                  required
-                  fullWidth
+                {/* add space */}
+                <Box sx={{ mt: 1 }} />
+                <EP_TEXTFIELD
                   name="password"
-                  onChange={handleChange}
-                  onBlur={handleBlur}
+                  required={true}
+                  handleChange={handleChange}
+                  handleBlur={handleBlur}
                   label="Password"
-                  type="password"
-                  id="password"
-                  autoComplete="current-password"
+                  errors={errors}
+                  touched={touched}
                   value={values.password}
+                  disabled={isSubmitting}
                 />
                 <Button
                   type="submit"
@@ -143,7 +134,7 @@ export default function SignIn() {
                 >
                   Sign In
                 </Button>
-                {console.log(values)}
+                {/* {console.log(values)} */}
               </Form>
             )}
           </Formik>
