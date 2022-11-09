@@ -54,5 +54,11 @@
     "react-app-alias": "^2.2.2",
     "react-app-rewired": "^2.2.1",
     "react-router-dom": "^6.4.2"
+  },
+  "engines": {
+    "npm": ">=8.7.0"
+  },
+  "overrides": {
+    "react": "$react"
   }
 }
