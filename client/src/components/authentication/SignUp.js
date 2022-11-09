@@ -19,15 +19,11 @@ import { signupValidationSchema } from "./validationSchemas/signup.schema";
 import { EP_TEXTFIELD } from "@helpers/form";
 import axios from "axios";
 
-// socket io
-import { io } from "socket.io-client";
 const {
   REACT_APP_AUTH_API_URL_PRODUCTION,
   REACT_APP_AUTH_API_URL_DEVELOPMENT,
   NODE_ENV,
-} = process.env;const socket = io(NODE_ENV === "production"
-? REACT_APP_AUTH_API_URL_PRODUCTION
-: REACT_APP_AUTH_API_URL_DEVELOPMENT);
+} = process.env;
 
 function Copyright(props) {
   return (
@@ -56,7 +52,7 @@ export function SignUp() {
         component="main"
         maxWidth="xs"
         style={{
-          boxShadow: "0 0 16px 0 rgba(0,0,0,0.7)"
+          boxShadow: "0 0 16px 0 rgba(0,0,0,0.7)",
         }}
       >
         <CssBaseline />
@@ -65,7 +61,7 @@ export function SignUp() {
             marginTop: 8,
             display: "flex",
             flexDirection: "column",
-            alignItems: "center"
+            alignItems: "center",
           }}
         >
           <Avatar sx={{ m: 1, bgcolor: "primary.main" }}>
@@ -83,9 +79,14 @@ export function SignUp() {
             onSubmit={(values, { setSubmitting }) => {
               // submit data to api
               axios
-                .post(`${NODE_ENV === "production"
-                ? REACT_APP_AUTH_API_URL_PRODUCTION
-                : REACT_APP_AUTH_API_URL_DEVELOPMENT}/signup`, values)
+                .post(
+                  `${
+                    NODE_ENV === "production"
+                      ? REACT_APP_AUTH_API_URL_PRODUCTION
+                      : REACT_APP_AUTH_API_URL_DEVELOPMENT
+                  }/signup`,
+                  values
+                )
                 .then((res) => {
                   const { data } = res;
                   Notification("Success", `Welcome ${data.firstName}`);
@@ -107,7 +108,7 @@ export function SignUp() {
               handleChange,
               handleBlur,
               handleSubmit,
-              isSubmitting
+              isSubmitting,
               /* and other goodies */
             }) => (
               <Form onSubmit={handleSubmit}>
