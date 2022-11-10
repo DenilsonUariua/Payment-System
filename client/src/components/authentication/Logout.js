@@ -6,12 +6,11 @@ export const Logout = () => {
   const { user, setUser } = useContext(UserContext);
   const navigate = useNavigate();
   useEffect(() => {
-    return () => {
-      setUser(null);
-      localStorage.removeItem("user");
-      navigate("/");
-    };
-  }, []);
+    setUser(null);
+    localStorage.removeItem("user");
+    navigate("/");
+    return () => {};
+  }, [setUser, navigate]);
 
   return <div>Logging out...</div>;
 };
