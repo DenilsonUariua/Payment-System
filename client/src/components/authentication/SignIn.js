@@ -55,7 +55,8 @@ export function SignIn() {
         component="main"
         maxWidth="xs"
         style={{
-          boxShadow: "0 0 16px 0 rgba(0,0,0,0.7)"
+          boxShadow: "0 0 16px 0 rgba(0,0,0,0.7)",
+          backgroundColor: "white",
         }}
       >
         <CssBaseline />

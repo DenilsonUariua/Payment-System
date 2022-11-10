@@ -55,7 +55,7 @@ export default function Orders() {
                 <TableCell>{row.productId.name}</TableCell>
                 <TableCell>{row.purchaseId}</TableCell>
                 <TableCell>{row.productId.description}</TableCell>
-                <TableCell align="right">{`${row.productId.price}`}</TableCell>
+                <TableCell align="right">{`${`N$${row.productId.price}`}`}</TableCell>
                 <TableCell>{`${row.productId.status}`}</TableCell>
               </TableRow>
             ))}

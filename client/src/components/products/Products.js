@@ -92,7 +92,7 @@ export const Products = () => {
     },
     {
       name: "Price",
-      selector: (row) => row.price,
+      selector: (row) => `N$${row.price}`,
       sortable: true,
     },
     {

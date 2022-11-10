@@ -60,6 +60,19 @@ export const UserPurchases = () => {
         console.log(err);
       });
   };
+  const handleRejection = (purchase) => {
+    axios
+      .get(`${NODE_ENV === "production"
+      ? REACT_APP_AUTH_API_URL_PRODUCTION
+      : REACT_APP_AUTH_API_URL_DEVELOPMENT}/purchases/reject/${purchase._id}`)
+      .then((res) => {
+        console.log(res);
+        getData();
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  };
 
   const contextActions = React.useMemo(() => {
     const handleDelete = () => {
@@ -119,6 +132,15 @@ export const UserPurchases = () => {
           >
             PAY
           </Button>
+          <Button
+            variant="outlined"
+            onClick={() => {
+              console.log("row", row);
+              handleRejection(row);
+            }}
+          >
+            CANCEL
+          </Button>
         </Fragment>
       ),
       sortable: true
@@ -132,7 +154,8 @@ export const UserPurchases = () => {
         maxWidth="lg"
         style={{
           marginTop: "5%",
-          boxShadow: "0 0 16px 0 rgba(0,0,0,0.7)"
+          boxShadow: "0 0 16px 0 rgba(0,0,0,0.7)",
+          backgroundColor: "transparent",
         }}
       >
         <DataTable

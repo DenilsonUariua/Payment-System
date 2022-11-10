@@ -21,7 +21,7 @@ import { UserContext } from "@context";
 const {
   REACT_APP_AUTH_API_URL_PRODUCTION,
   REACT_APP_AUTH_API_URL_DEVELOPMENT,
-  NODE_ENV,
+  NODE_ENV
 } = process.env;
 
 function Copyright(props) {
@@ -52,6 +52,7 @@ export function CreateProduct() {
         maxWidth="xs"
         style={{
           boxShadow: "0 0 16px 0 rgba(0,0,0,0.7)",
+          backgroundColor: "white"
         }}
       >
         <CssBaseline />
@@ -60,7 +61,7 @@ export function CreateProduct() {
             marginTop: 8,
             display: "flex",
             flexDirection: "column",
-            alignItems: "center",
+            alignItems: "center"
           }}
         >
           <Avatar sx={{ m: 1, bgcolor: "primary.main" }}>
@@ -115,7 +116,7 @@ export function CreateProduct() {
               handleChange,
               handleBlur,
               handleSubmit,
-              isSubmitting,
+              isSubmitting
               /* and other goodies */
             }) => (
               <Form onSubmit={handleSubmit}>

@@ -16,13 +16,13 @@ import { Link } from "react-router-dom";
 import { UserContext } from "../../use-context/UserContext";
 
 const authenticatedPages = [
+  "Dashboard",
   "Products",
   "Purchases",
-  "Dashboard",
   "Create Product"
 ];
 const unauthenticatedPages = ["Signin", "Signup"];
-const settingsAuthenticated = ["Profile", "Account", "Dashboard", "Logout"];
+const settingsAuthenticated = ["Dashboard", "Profile", "Account", "Logout"];
 const settingsUnathenticaed = ["Home", "Signin", "Signup"];
 
 export const Navbar = () => {
