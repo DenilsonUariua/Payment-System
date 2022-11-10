@@ -22,7 +22,7 @@ import axios from "axios";
 const {
   REACT_APP_AUTH_API_URL_PRODUCTION,
   REACT_APP_AUTH_API_URL_DEVELOPMENT,
-  NODE_ENV,
+  NODE_ENV
 } = process.env;
 
 function Copyright(props) {
@@ -55,7 +55,7 @@ export function SignIn() {
         component="main"
         maxWidth="xs"
         style={{
-          boxShadow: "0 0 16px 0 rgba(0,0,0,0.7)",
+          boxShadow: "0 0 16px 0 rgba(0,0,0,0.7)"
         }}
       >
         <CssBaseline />
@@ -64,7 +64,7 @@ export function SignIn() {
             marginTop: 8,
             display: "flex",
             flexDirection: "column",
-            alignItems: "center",
+            alignItems: "center"
           }}
         >
           <Avatar sx={{ m: 1, bgcolor: "primary.main" }}></Avatar>
@@ -108,7 +108,7 @@ export function SignIn() {
               handleChange,
               handleBlur,
               handleSubmit,
-              isSubmitting,
+              isSubmitting
               /* and other goodies */
             }) => (
               <Form onSubmit={handleSubmit}>
@@ -127,6 +127,7 @@ export function SignIn() {
                 {/* add space */}
                 <Box sx={{ mt: 1 }} />
                 <EP_TEXTFIELD
+                  type="password"
                   name="password"
                   required={true}
                   handleChange={handleChange}
