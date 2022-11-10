@@ -143,7 +143,6 @@ export const UserPurchases = () => {
           </Button>
         </Fragment>
       ),
-      sortable: true
     }
   ];
 

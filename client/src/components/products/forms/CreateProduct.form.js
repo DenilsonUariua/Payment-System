@@ -1,4 +1,4 @@
-import React, { useContext } from "react";
+import React, { useContext, useState } from "react";
 import Avatar from "@mui/material/Avatar";
 import Button from "@mui/material/Button";
 import CssBaseline from "@mui/material/CssBaseline";
@@ -14,9 +14,10 @@ import { ProductModel } from "./models/Product.model";
 import { productValidationSchema } from "../validationSchemas/product.schema";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
-import { EP_TEXTFIELD } from "@helpers/form";
+import { EP_TEXTFIELD, EP_UPLOAD } from "@helpers/form";
 import { Notification } from "@helpers/notifications";
 import { UserContext } from "@context";
+import storage from "@firebase";
 
 const {
   REACT_APP_AUTH_API_URL_PRODUCTION,
@@ -44,7 +45,25 @@ const theme = createTheme();
 export function CreateProduct() {
   // use navigate from react router dom
   const navigate = useNavigate();
-  const { user, setUser } = useContext(UserContext);
+
+  const [image, setImage] = useState("");
+  const [url, setUrl] = useState("");
+  async function upload() {
+    if (image == null) return;
+    const result = await storage
+      .ref(`/images/${image.name}`)
+      .put(image)
+      .then((snapshot) => {
+        console.log("snapshot", snapshot);
+        snapshot.ref.getDownloadURL().then((url) => {
+          console.log("url", url);
+          setUrl(url);
+        });
+      });
+    return result;
+  }
+
+  const { user } = useContext(UserContext);
   return (
     <ThemeProvider theme={theme}>
       <Container
@@ -76,8 +95,11 @@ export function CreateProduct() {
             validationSchema={productValidationSchema}
             validateOnChange={true}
             validateOnBlur={true}
-            onSubmit={(values, actions) => {
+            onSubmit={async (values, actions) => {
               actions.setSubmitting(true);
+              const result = await upload();
+              console.log("result", result);
+              values.image = url;
               values.sellerId = user.sellerId;
               console.log("values: ", values);
               // submit data to api
@@ -90,17 +112,15 @@ export function CreateProduct() {
                   }/product`,
                   values
                 )
-                .then((res) => {
-                  const { data } = res;
+                .then(() => {
                   Notification("Success", "Product created successfully");
-                  // actions.resetForm();
+                  actions.resetForm();
                   setTimeout(() => {
                     actions.setSubmitting(false);
-                    window.location.href = "/products";
-                  }, 2000);
+                    navigate("/products");
+                  }, 1000);
 
                   // pass data to login page
-                  //   navigate("/dashboard", { state: { data } });
                 })
                 .catch((err) => {
                   Notification("Error", "Product not created");
@@ -143,18 +163,14 @@ export function CreateProduct() {
                     value={values.description}
                     disabled={isSubmitting}
                   />
-                  <EP_TEXTFIELD
-                    type="url"
-                    name="image"
-                    required={true}
-                    handleChange={handleChange}
-                    handleBlur={handleBlur}
-                    label="Image Url"
-                    errors={errors}
-                    touched={touched}
-                    value={values.image}
-                    disabled={isSubmitting}
-                  />
+                  <Container style={{ padding: "1rem", width: "50%" }}>
+                    <input
+                      type="file"
+                      onChange={(e) => {
+                        setImage(e.target.files[0]);
+                      }}
+                    />
+                  </Container>
                   <EP_TEXTFIELD
                     type="number"
                     name="price"

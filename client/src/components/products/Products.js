@@ -133,7 +133,7 @@ export const Products = () => {
         component="main"
         maxWidth="lg"
         style={{
-          marginTop: "5%",
+          marginTop: "2%",
           boxShadow: "0 0 16px 0 rgba(0,0,0,0.7)",
         }}
       >
