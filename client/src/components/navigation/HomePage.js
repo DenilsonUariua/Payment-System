@@ -10,7 +10,6 @@ const backgroundImage =
 
 export function HomePage() {
   const { user } = useContext(UserContext);
-  console.log("HomePage", backgroundImage);
   const title = "Pay on time, worry free";
   return (
     <Layout

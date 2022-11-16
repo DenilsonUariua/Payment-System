@@ -147,7 +147,6 @@ export function SignIn() {
                 >
                   Sign In
                 </Button>
-                {/* {console.log(values)} */}
               </Form>
             )}
           </Formik>
