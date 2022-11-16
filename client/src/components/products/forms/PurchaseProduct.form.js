@@ -13,7 +13,7 @@ import axios from "axios";
 const {
   REACT_APP_AUTH_API_URL_PRODUCTION,
   REACT_APP_AUTH_API_URL_DEVELOPMENT,
-  NODE_ENV
+  NODE_ENV,
 } = process.env;
 export function PurchaseProduct(props) {
   const { onClose, selectedProduct, open, getData } = props;
@@ -33,7 +33,7 @@ export function PurchaseProduct(props) {
         {
           buyerId: user.buyerId,
           sellerId: selectedProduct.sellerId,
-          productId: selectedProduct._id
+          productId: selectedProduct._id,
         }
       )
       .then((res) => {
@@ -95,6 +95,18 @@ export function PurchaseProduct(props) {
           </Typography>
         </Grid>
         <Grid item xs={12} sm={12}>
+          <img
+            src={selectedProduct && selectedProduct.image}
+            alt="product"
+            style={{
+              width: "200px",
+              height: "200px",
+              objectFit: "cover",
+              margin: "auto 3rem",
+            }}
+          />
+        </Grid>
+        <Grid item xs={12} sm={12}>
           <Typography
             variant="body2"
             color="text.secondary"
@@ -116,5 +128,5 @@ export function PurchaseProduct(props) {
 PurchaseProduct.propTypes = {
   onClose: PropTypes.func.isRequired,
   open: PropTypes.bool.isRequired,
-  selectedValue: PropTypes.string.isRequired
+  selectedValue: PropTypes.string.isRequired,
 };

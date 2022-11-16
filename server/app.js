@@ -3,7 +3,6 @@ require("dotenv").config();
 var express = require("express");
 var bodyParser = require("body-parser");
 var cookieParser = require("cookie-parser");
-var session = require("express-session");
 var morgan = require("morgan");
 var User = require("./models/User");
 var Product = require("./models/Product");
@@ -14,54 +13,27 @@ const { createServer } = require("http");
 var uniqid = require("uniqid");
 const { PORT } = process.env;
 
-const sessionMiddleware = session({
-  key: "user_sid",
-  secret: "somerandonstuffs",
-  resave: false,
-  saveUninitialized: false,
-  cookie: {
-    expires: 600000
-  }
-});
 const app = express();
 app.use(
   cors({
     origin: ["http://localhost:3000"],
     methods: ["GET,HEAD,PUT,PATCH,POST,DELETE"],
-    credentials: true
+    credentials: true,
   })
 );
 const httpServer = createServer(app);
 
 app.use(cookieParser());
 
-// This middleware will check if user's cookie is still saved in browser and user is not set, then automatically log the user out.
-// This usually happens when you stop your express server after login, your cookie still remains saved in the browser.
-app.use((req, res, next) => {
-  if (req.cookies.user_sid && !req.session.user) {
-    res.clearCookie("user_sid");
-  }
-  next();
-});
-
 // // initialize body-parser to parse incoming parameters requests to req.body
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
-app.use(sessionMiddleware);
 app.use(morgan("dev"));
-// middleware function to check for logged-in users
-const sessionChecker = (req, res, next) => {
-  if (req.session.user) {
-    res.send("/dashboard", { user: req.session.user });
-  } else {
-    next();
-  }
-};
-app.get("/login", sessionChecker, (req, res) => {
+app.get("/login", (req, res) => {
   res.send("/login");
 });
 
-app.post("/login", sessionChecker, async (req, res) => {
+app.post("/login", async (req, res) => {
   let email = req.body.email,
     password = req.body.password;
 
@@ -74,27 +46,22 @@ app.post("/login", sessionChecker, async (req, res) => {
       if (!match) {
         return res.status(401).send("Wrong Password");
       } else {
-        req.session.user = user;
-        req.session.authenticated = true;
         return res.status(200).send({
           firstName: user.firstName,
           lastName: user.lastName,
           email: user.email,
           buyerId: user._id,
-          sellerId: user._id
+          sellerId: user._id,
         });
       }
     });
   } catch (error) {
     console.log(error);
   }
-
-  // res.status(200).send("ok");
-  await req.session.save();
 });
 app
   .route("/signup")
-  .get(sessionChecker, (req, res) => {
+  .get((req, res) => {
     res.sendFile(__dirname + "/public/signup.html");
   })
   .post((req, res) => {
@@ -108,20 +75,19 @@ app
       email: req.body.email,
       password: req.body.password,
       buyerId: buyerId,
-      sellerId: sellerId
+      sellerId: sellerId,
     });
     user.save(async (err, docs) => {
       if (err) {
         console.log("Error: ", err);
         res.status(500).send("Error registering new user please try again.");
       } else {
-        req.session.user = docs;
         res.status(200).send({
           firstName: docs.firstName,
           lastName: docs.lastName,
           email: docs.email,
-          buyerId: docs.buyerId,
-          sellerId: docs.sellerId
+          buyerId: docs._id,
+          sellerId: docs._id,
         });
       }
     });
@@ -191,7 +157,7 @@ app.route("/purchases/buy/:id").get((req, res) => {
       }
     }
   );
-})
+});
 app.route("/purchases/confirm/:id").get((req, res) => {
   Purchase.findOneAndUpdate(
     { _id: req.params.id },
@@ -321,7 +287,7 @@ app.route("/product").post((req, res) => {
     price: req.body.price,
     description: req.body.description,
     image: req.body.image,
-    sellerId: req.body.sellerId
+    sellerId: req.body.sellerId,
   });
   product.save(async (err, docs) => {
     if (err) {

@@ -22,7 +22,7 @@ import { uploadFile } from "@firebaseFolder";
 const {
   REACT_APP_AUTH_API_URL_PRODUCTION,
   REACT_APP_AUTH_API_URL_DEVELOPMENT,
-  NODE_ENV
+  NODE_ENV,
 } = process.env;
 
 function Copyright(props) {
@@ -48,6 +48,7 @@ export function CreateProduct() {
 
   const [image, setImage] = useState("");
   const [url, setUrl] = useState("");
+  const [uploading, setUploading] = useState(false);
   async function upload(file) {
     if (image == null) return;
     const result = await uploadFile(file);
@@ -62,7 +63,7 @@ export function CreateProduct() {
         maxWidth="xs"
         style={{
           boxShadow: "0 0 16px 0 rgba(0,0,0,0.7)",
-          backgroundColor: "white"
+          backgroundColor: "white",
         }}
       >
         <CssBaseline />
@@ -71,7 +72,7 @@ export function CreateProduct() {
             marginTop: 8,
             display: "flex",
             flexDirection: "column",
-            alignItems: "center"
+            alignItems: "center",
           }}
         >
           <Avatar sx={{ m: 1, bgcolor: "primary.main" }}>
@@ -124,7 +125,7 @@ export function CreateProduct() {
               handleChange,
               handleBlur,
               handleSubmit,
-              isSubmitting
+              isSubmitting,
               /* and other goodies */
             }) => (
               <Form onSubmit={handleSubmit}>
@@ -155,10 +156,12 @@ export function CreateProduct() {
                     <input
                       type="file"
                       onChange={async (e) => {
+                        setUploading(true);
                         setImage(e.target.files[0]);
                         const url = await upload(e.target.files[0]);
                         values.image = url;
                         setUrl(url);
+                        setUploading(false);
                       }}
                       style={{ width: "100%", overflow: "hidden" }}
                     />
@@ -181,9 +184,9 @@ export function CreateProduct() {
                   fullWidth
                   variant="contained"
                   sx={{ mt: 3, mb: 2 }}
-                  disabled={isSubmitting}
+                  disabled={isSubmitting || uploading}
                 >
-                  Create Product
+                  {uploading ? "Uploading..." : "Create Product"}
                 </Button>
               </Form>
             )}

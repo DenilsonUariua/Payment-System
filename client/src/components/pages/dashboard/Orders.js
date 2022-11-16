@@ -13,7 +13,7 @@ import { UserContext } from "@context";
 const {
   REACT_APP_AUTH_API_URL_PRODUCTION,
   REACT_APP_AUTH_API_URL_DEVELOPMENT,
-  NODE_ENV
+  NODE_ENV,
 } = process.env;
 
 export default function Orders() {
@@ -60,45 +60,51 @@ export default function Orders() {
   return !loading ? (
     <React.Fragment>
       <Title>Purchases</Title>
-      <Table size="small">
-        <TableHead>
-          <TableRow>
-            <TableCell>Seller</TableCell>
-            <TableCell>Buyer</TableCell>
-            <TableCell>Product Name</TableCell>
-            <TableCell>Purchase ID</TableCell>
-            <TableCell>Description</TableCell>
-            <TableCell align="right">Sale Amount</TableCell>
-            <TableCell>Status</TableCell>
-            <TableCell>Actions</TableCell>
-          </TableRow>
-        </TableHead>
-        <TableBody>
-          {products.map((row) => (
-            <TableRow key={row._id}>
-              <TableCell>{`${row.sellerId.firstName} ${row.sellerId.lastName}`}</TableCell>
-              <TableCell>{`${row.buyerId.firstName} ${row.buyerId.lastName}`}</TableCell>
-              <TableCell>{row.productId.name}</TableCell>
-              <TableCell>{row.purchaseId}</TableCell>
-              <TableCell>{row.productId.description}</TableCell>
-              <TableCell align="right">{`${`N$${row.productId.price}`}`}</TableCell>
-              <TableCell>{`${row.productId.status}`}</TableCell>
-              <TableCell>
-                {row.productId.status === "Paid Awaiting Delivery" ? (
-                  <Button
-                    variant="outlined"
-                    onClick={() => {
-                      handleConfirmation(row);
-                    }}
-                  >
-                    Confirm Delivery
-                  </Button>
-                ) : "None"}
-              </TableCell>
+      {products.length > 0 ? (
+        <Table size="small">
+          <TableHead>
+            <TableRow>
+              <TableCell>Seller</TableCell>
+              <TableCell>Buyer</TableCell>
+              <TableCell>Product Name</TableCell>
+              <TableCell>Purchase ID</TableCell>
+              <TableCell>Description</TableCell>
+              <TableCell align="right">Sale Amount</TableCell>
+              <TableCell>Status</TableCell>
+              <TableCell>Actions</TableCell>
             </TableRow>
-          ))}
-        </TableBody>
-      </Table>
+          </TableHead>
+          <TableBody>
+            {products.map((row) => (
+              <TableRow key={row._id}>
+                <TableCell>{`${row.sellerId.firstName} ${row.sellerId.lastName}`}</TableCell>
+                <TableCell>{`${row.buyerId.firstName} ${row.buyerId.lastName}`}</TableCell>
+                <TableCell>{row.productId.name}</TableCell>
+                <TableCell>{row.purchaseId}</TableCell>
+                <TableCell>{row.productId.description}</TableCell>
+                <TableCell align="right">{`${`N$${row.productId.price}`}`}</TableCell>
+                <TableCell>{`${row.productId.status}`}</TableCell>
+                <TableCell>
+                  {row.productId.status === "Paid Awaiting Delivery" ? (
+                    <Button
+                      variant="outlined"
+                      onClick={() => {
+                        handleConfirmation(row);
+                      }}
+                    >
+                      Confirm Delivery
+                    </Button>
+                  ) : (
+                    "None"
+                  )}
+                </TableCell>
+              </TableRow>
+            ))}
+          </TableBody>
+        </Table>
+      ) : (
+        "No Purchases"
+      )}
     </React.Fragment>
   ) : (
     "Loading..."
