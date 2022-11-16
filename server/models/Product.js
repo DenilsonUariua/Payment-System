@@ -27,12 +27,13 @@ const productSchema = mongoose.Schema(
       required: true
     },
     sellerId: {
-      type: String,
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "user",
       required: true
     },
     buyerId: {
-      type: String,
-      required: false
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "user"
     },
     status: {
       type: String,

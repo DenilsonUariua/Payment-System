@@ -22,7 +22,6 @@ export const UserPurchases = () => {
   const [data, setData] = useState(undefined);
 
   function getData() {
-    user && console.log("user", user);
     user &&
       axios
         .get(`${NODE_ENV === "production"
@@ -53,7 +52,6 @@ export const UserPurchases = () => {
       ? REACT_APP_AUTH_API_URL_PRODUCTION
       : REACT_APP_AUTH_API_URL_DEVELOPMENT}/purchases/pay/${purchase._id}`)
       .then((res) => {
-        console.log("res", res);
         getData();
       })
       .catch((err) => {
@@ -66,7 +64,6 @@ export const UserPurchases = () => {
       ? REACT_APP_AUTH_API_URL_PRODUCTION
       : REACT_APP_AUTH_API_URL_DEVELOPMENT}/purchases/reject/${purchase._id}`)
       .then((res) => {
-        console.log(res);
         getData();
       })
       .catch((err) => {
@@ -106,7 +103,7 @@ export const UserPurchases = () => {
   const columns = [
     {
       name: "Seller",
-      selector: (row) => row.sellerId,
+      selector: (row) => `${row.sellerId.firstName} ${row.sellerId.lastName}`,
       sortable: true
     },
     {
@@ -126,7 +123,6 @@ export const UserPurchases = () => {
           <Button
             variant="outlined"
             onClick={() => {
-              console.log("row", row);
               handlePayment(row);
             }}
           >
@@ -135,7 +131,6 @@ export const UserPurchases = () => {
           <Button
             variant="outlined"
             onClick={() => {
-              console.log("row", row);
               handleRejection(row);
             }}
           >

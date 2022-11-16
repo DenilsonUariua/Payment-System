@@ -17,7 +17,7 @@ import axios from "axios";
 import { EP_TEXTFIELD, EP_UPLOAD } from "@helpers/form";
 import { Notification } from "@helpers/notifications";
 import { UserContext } from "@context";
-import storage from "@firebase";
+import { uploadFile } from "@firebaseFolder";
 
 const {
   REACT_APP_AUTH_API_URL_PRODUCTION,
@@ -48,18 +48,9 @@ export function CreateProduct() {
 
   const [image, setImage] = useState("");
   const [url, setUrl] = useState("");
-  async function upload() {
+  async function upload(file) {
     if (image == null) return;
-    const result = await storage
-      .ref(`/images/${image.name}`)
-      .put(image)
-      .then((snapshot) => {
-        console.log("snapshot", snapshot);
-        snapshot.ref.getDownloadURL().then((url) => {
-          console.log("url", url);
-          setUrl(url);
-        });
-      });
+    const result = await uploadFile(file);
     return result;
   }
 
@@ -97,11 +88,8 @@ export function CreateProduct() {
             validateOnBlur={true}
             onSubmit={async (values, actions) => {
               actions.setSubmitting(true);
-              const result = await upload();
-              console.log("result", result);
               values.image = url;
               values.sellerId = user.sellerId;
-              console.log("values: ", values);
               // submit data to api
               axios
                 .post(
@@ -166,9 +154,13 @@ export function CreateProduct() {
                   <Container style={{ padding: "1rem", width: "50%" }}>
                     <input
                       type="file"
-                      onChange={(e) => {
+                      onChange={async (e) => {
                         setImage(e.target.files[0]);
+                        const url = await upload(e.target.files[0]);
+                        values.image = url;
+                        setUrl(url);
                       }}
+                      style={{ width: "100%", overflow: "hidden" }}
                     />
                   </Container>
                   <EP_TEXTFIELD

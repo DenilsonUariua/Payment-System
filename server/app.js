@@ -11,7 +11,6 @@ var Purchase = require("./models/Purchase");
 const cors = require("cors");
 var http = require("http");
 const { createServer } = require("http");
-const { Server } = require("socket.io");
 var uniqid = require("uniqid");
 const { PORT } = process.env;
 
@@ -52,7 +51,6 @@ app.use(sessionMiddleware);
 app.use(morgan("dev"));
 // middleware function to check for logged-in users
 const sessionChecker = (req, res, next) => {
-  console.log("sessionChecker", req.session.user);
   if (req.session.user) {
     res.send("/dashboard", { user: req.session.user });
   } else {
@@ -82,8 +80,8 @@ app.post("/login", sessionChecker, async (req, res) => {
           firstName: user.firstName,
           lastName: user.lastName,
           email: user.email,
-          buyerId: user.buyerId,
-          sellerId: user.sellerId
+          buyerId: user._id,
+          sellerId: user._id
         });
       }
     });
@@ -92,7 +90,6 @@ app.post("/login", sessionChecker, async (req, res) => {
   }
 
   // res.status(200).send("ok");
-  console.log("req.session", req.session);
   await req.session.save();
 });
 app
@@ -118,7 +115,6 @@ app
         console.log("Error: ", err);
         res.status(500).send("Error registering new user please try again.");
       } else {
-        console.log("Success: ", docs);
         req.session.user = docs;
         res.status(200).send({
           firstName: docs.firstName,
@@ -132,19 +128,22 @@ app
   });
 
 app.route("/products").get((req, res) => {
-  Product.find({}, (err, docs) => {
-    if (err) {
-      console.log("Error: ", err);
-      res.status(500).send("Error fetching products");
-    } else {
-      console.log("Success: ", docs);
-      res.status(200).send(docs);
-    }
-  });
+  Product.find({ status: "Available" })
+    .populate("sellerId")
+    .then((docs, err) => {
+      if (err) {
+        console.log("Error: ", err);
+        res.status(500).send("Error fetching products");
+      } else {
+        console.log("Success: ", docs);
+        res.status(200).send(docs);
+      }
+    });
 });
 app.route("/purchases/buyer/:id").get((req, res) => {
   Purchase.find({ buyerId: req.params.id })
     .populate("productId")
+    .populate("sellerId")
     .then((docs) => {
       console.log("Success: ", docs);
       const verified = docs.filter((doc) => doc.status === "Verified");
@@ -158,6 +157,8 @@ app.route("/purchases/buyer/:id").get((req, res) => {
 app.route("/user-purchases/:id").get((req, res) => {
   Purchase.find({ buyerId: req.params.id })
     .populate("productId")
+    .populate("buyerId")
+    .populate("sellerId")
     .then((docs) => {
       res.status(200).send(docs);
     })
@@ -166,6 +167,31 @@ app.route("/user-purchases/:id").get((req, res) => {
       res.status(500).send("Error fetching purchases");
     });
 });
+app.route("/purchases/buy/:id").get((req, res) => {
+  Purchase.findOneAndUpdate(
+    { _id: req.params.id },
+    { status: "Sold" },
+    (err, docs) => {
+      if (err) {
+        console.log("Error: ", err);
+      } else {
+        Product.findOneAndUpdate(
+          { _id: docs.productId },
+          { status: "Sold" },
+          (err, product) => {
+            if (err) {
+              res.status(500);
+              console.log("Error: ", err);
+            } else {
+              res.status(200).send(docs);
+              console.log("Success: ", product);
+            }
+          }
+        );
+      }
+    }
+  );
+})
 app.route("/purchases/confirm/:id").get((req, res) => {
   Purchase.findOneAndUpdate(
     { _id: req.params.id },
@@ -240,16 +266,17 @@ app.route("/purchases/reject/:id").get((req, res) => {
   });
 });
 app.route("/purchases/seller/:id").get((req, res) => {
-  Purchase.find({ sellerId: req.params.id }, (err, docs) => {
-    if (err) {
-      console.log("Error: ", err);
-      res.status(500).send("Error fetching products");
-    } else {
-      console.log("Success: ", docs);
+  Purchase.find({ sellerId: req.params.id })
+    .populate("productId")
+    .populate("buyerId")
+    .then((docs) => {
       const pending = docs.filter((doc) => doc.status === "Pending");
       res.status(200).send(pending);
-    }
-  });
+    })
+    .catch((err) => {
+      console.log("Error: ", err);
+      res.status(500).send("Error fetching purchases");
+    });
 });
 app.route("/purchase").post((req, res) => {
   console.log("req.body", req.body);
@@ -307,32 +334,6 @@ app.route("/product").post((req, res) => {
   });
 });
 
-const io = new Server(httpServer, {
-  cors: {
-    origin: "http://localhost:3000",
-    methods: ["GET", "POST"]
-  }
-});
 httpServer.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
-});
-
-// convert a connect middleware to a Socket.IO middleware
-const wrap = (middleware) => (socket, next) =>
-  middleware(socket.request, {}, next);
-
-io.use(wrap(sessionMiddleware));
-
-// only allow authenticated users
-io.use((socket, next) => {
-  const session = socket.request.session;
-  if (session && session.authenticated) {
-    next();
-  } else {
-    next(new Error("unauthorized"));
-  }
-});
-
-io.on("connection", (socket) => {
-  console.log("Connected", socket.request.session);
 });

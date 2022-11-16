@@ -10,7 +10,7 @@ import { PurchaseProduct } from "./forms";
 const {
   REACT_APP_AUTH_API_URL_PRODUCTION,
   REACT_APP_AUTH_API_URL_DEVELOPMENT,
-  NODE_ENV,
+  NODE_ENV
 } = process.env;
 const theme = createTheme();
 
@@ -30,12 +30,16 @@ export const Products = () => {
     setOpen(false);
     setSelectedProduct(value);
   };
-  
+
   function getData() {
     axios
-      .get(`${NODE_ENV === "production"
-      ? REACT_APP_AUTH_API_URL_PRODUCTION
-      : REACT_APP_AUTH_API_URL_DEVELOPMENT}/products`)
+      .get(
+        `${
+          NODE_ENV === "production"
+            ? REACT_APP_AUTH_API_URL_PRODUCTION
+            : REACT_APP_AUTH_API_URL_DEVELOPMENT
+        }/products`
+      )
       .then((res) => {
         setData(res.data);
       })
@@ -88,22 +92,27 @@ export const Products = () => {
     {
       name: "Name",
       selector: (row) => row.name,
-      sortable: true,
+      sortable: true
+    },
+    {
+      name: "Seller",
+      selector: (row) => `${row.sellerId.firstName} ${row.sellerId.lastName}`,
+      sortable: true
     },
     {
       name: "Price",
       selector: (row) => `N$${row.price}`,
-      sortable: true,
+      sortable: true
     },
     {
       name: "Description",
       selector: (row) => row.description,
-      sortable: true,
+      sortable: true
     },
     {
       name: "Status",
       selector: (row) => row.status,
-      sortable: true,
+      sortable: true
     },
     {
       name: "Actions",
@@ -111,7 +120,7 @@ export const Products = () => {
         <Fragment>
           <Link>
             <Button
-            disabled={row.status !== "Available"}
+              disabled={row.status !== "Available"}
               variant="outlined"
               onClick={() => {
                 setSelectedProduct(row);
@@ -123,8 +132,8 @@ export const Products = () => {
           </Link>
         </Fragment>
       ),
-      sortable: true,
-    },
+      sortable: true
+    }
   ];
 
   return (
@@ -134,7 +143,7 @@ export const Products = () => {
         maxWidth="lg"
         style={{
           marginTop: "2%",
-          boxShadow: "0 0 16px 0 rgba(0,0,0,0.7)",
+          boxShadow: "0 0 16px 0 rgba(0,0,0,0.7)"
         }}
       >
         <PurchaseProduct

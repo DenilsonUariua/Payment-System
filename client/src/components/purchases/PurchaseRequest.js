@@ -25,7 +25,6 @@ export const PurchaseRequest = () => {
       ? REACT_APP_AUTH_API_URL_PRODUCTION
       : REACT_APP_AUTH_API_URL_DEVELOPMENT}/purchases/confirm/${purchase._id}`)
       .then((res) => {
-        console.log(res);
         getData();
       })
       .catch((err) => {
@@ -38,7 +37,6 @@ export const PurchaseRequest = () => {
       ? REACT_APP_AUTH_API_URL_PRODUCTION
       : REACT_APP_AUTH_API_URL_DEVELOPMENT}/purchases/reject/${purchase._id}`)
       .then((res) => {
-        console.log(res);
         getData();
       })
       .catch((err) => {
@@ -102,8 +100,8 @@ export const PurchaseRequest = () => {
 
   const columns = [
     {
-      name: "Buyer Id",
-      selector: (row) => row.buyerId,
+      name: "Buyer name",
+      selector: (row) => `${row.buyerId.firstName} ${row.buyerId.lastName}`,
       sortable: true
     },
     {

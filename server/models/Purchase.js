@@ -12,11 +12,13 @@ mongoose.connect(MONGODB_URI, {
 const purchaseSchema = mongoose.Schema(
   {
     sellerId: {
-      type: String,
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "user",
       required: true
     },
     buyerId: {
-      type: String,
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "user",
       required: true
     },
     status: {

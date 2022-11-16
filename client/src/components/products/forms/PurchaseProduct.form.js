@@ -13,28 +13,30 @@ import axios from "axios";
 const {
   REACT_APP_AUTH_API_URL_PRODUCTION,
   REACT_APP_AUTH_API_URL_DEVELOPMENT,
-  NODE_ENV,
+  NODE_ENV
 } = process.env;
 export function PurchaseProduct(props) {
   const { onClose, selectedProduct, open, getData } = props;
   const { user } = useContext(UserContext);
-  console.log("selectedValue: ", user);
 
   const handleClose = () => {
     onClose(selectedProduct);
   };
   const handlePurchase = () => {
     axios
-      .post(`${NODE_ENV === "production"
-      ? REACT_APP_AUTH_API_URL_PRODUCTION
-      : REACT_APP_AUTH_API_URL_DEVELOPMENT}/purchase`, {
-        buyerId: user.buyerId,
-        sellerId: selectedProduct.sellerId,
-        productId: selectedProduct._id,
-      })
+      .post(
+        `${
+          NODE_ENV === "production"
+            ? REACT_APP_AUTH_API_URL_PRODUCTION
+            : REACT_APP_AUTH_API_URL_DEVELOPMENT
+        }/purchase`,
+        {
+          buyerId: user.buyerId,
+          sellerId: selectedProduct.sellerId,
+          productId: selectedProduct._id
+        }
+      )
       .then((res) => {
-        console.log(res);
-        console.log(res.data);
         getData();
         handleClose();
       })
@@ -65,7 +67,31 @@ export function PurchaseProduct(props) {
             align="left"
             style={{ paddingLeft: "3rem" }}
           >
-            Price: {`${selectedProduct && selectedProduct.price}`}
+            Seller name:{" "}
+            {`${selectedProduct && selectedProduct.sellerId.firstName} ${
+              selectedProduct && selectedProduct.sellerId.lastName
+            }`}
+          </Typography>
+        </Grid>
+        <Grid item xs={12} sm={12}>
+          <Typography
+            variant="body2"
+            color="text.secondary"
+            align="left"
+            style={{ paddingLeft: "3rem" }}
+          >
+            Seller Email:{" "}
+            {`${selectedProduct && selectedProduct.sellerId.email}`}
+          </Typography>
+        </Grid>
+        <Grid item xs={12} sm={12}>
+          <Typography
+            variant="body2"
+            color="text.secondary"
+            align="left"
+            style={{ paddingLeft: "3rem" }}
+          >
+            Price: {`N$${selectedProduct && selectedProduct.price}`}
           </Typography>
         </Grid>
         <Grid item xs={12} sm={12}>
@@ -90,5 +116,5 @@ export function PurchaseProduct(props) {
 PurchaseProduct.propTypes = {
   onClose: PropTypes.func.isRequired,
   open: PropTypes.bool.isRequired,
-  selectedValue: PropTypes.string.isRequired,
+  selectedValue: PropTypes.string.isRequired
 };
