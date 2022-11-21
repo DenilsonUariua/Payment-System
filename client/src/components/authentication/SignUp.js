@@ -115,7 +115,6 @@ export function SignUp() {
                 <Grid container spacing={2}>
                   <EP_TEXTFIELD
                     name="firstName"
-                    required={true}
                     handleChange={handleChange}
                     handleBlur={handleBlur}
                     label="First Name"
@@ -126,7 +125,6 @@ export function SignUp() {
                   />
                   <EP_TEXTFIELD
                     name="lastName"
-                    required={true}
                     handleChange={handleChange}
                     handleBlur={handleBlur}
                     label="Last Name"
@@ -138,7 +136,6 @@ export function SignUp() {
                   <EP_TEXTFIELD
                     width={12}
                     name="email"
-                    required={true}
                     handleChange={handleChange}
                     handleBlur={handleBlur}
                     label="Email Address"
@@ -151,7 +148,6 @@ export function SignUp() {
                     type="password"
                     width={12}
                     name="password"
-                    required={true}
                     handleChange={handleChange}
                     handleBlur={handleBlur}
                     label="Password"
