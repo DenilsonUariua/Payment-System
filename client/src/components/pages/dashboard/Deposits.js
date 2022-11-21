@@ -1,5 +1,4 @@
 import React, { useEffect, useState, useContext } from "react";
-import Link from "@mui/material/Link";
 import Typography from "@mui/material/Typography";
 import Title from "./Title";
 import { UserContext } from "@context";
@@ -10,10 +9,6 @@ const {
   REACT_APP_AUTH_API_URL_DEVELOPMENT,
   NODE_ENV
 } = process.env;
-
-function preventDefault(event) {
-  event.preventDefault();
-}
 
 export default function Deposits() {
   const { user } = useContext(UserContext);

@@ -1,11 +1,5 @@
 import { initializeApp } from "firebase/app";
-import {
-  getStorage,
-  ref,
-  getDownloadURL,
-  uploadBytes,
-  getMetadata
-} from "firebase/storage";
+import { getStorage, ref, getDownloadURL, uploadBytes } from "firebase/storage";
 
 const {
   REACT_APP_FIREBASE_AUTH_KEY,

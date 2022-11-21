@@ -3,7 +3,6 @@ import DataTable from "react-data-table-component";
 import Button from "@mui/material/Button";
 import Container from "@mui/material/Container";
 import { createTheme, ThemeProvider } from "@mui/material/styles";
-import { Link } from "react-router-dom";
 import axios from "axios";
 // import { PurchaseProduct } from "./forms";
 import { UserContext } from "@context";
@@ -40,6 +39,7 @@ export const UserPurchases = () => {
     return () => {
       setData(undefined);
     };
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [user]);
 
   const handleRowSelected = React.useCallback((state) => {

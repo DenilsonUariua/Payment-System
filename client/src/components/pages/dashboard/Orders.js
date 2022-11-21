@@ -1,5 +1,4 @@
 import React, { useEffect, useContext, useState } from "react";
-import Link from "@mui/material/Link";
 import Table from "@mui/material/Table";
 import TableBody from "@mui/material/TableBody";
 import TableCell from "@mui/material/TableCell";
@@ -40,6 +39,7 @@ export default function Orders() {
   };
   useEffect(() => {
     fetchPurchases();
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [user]);
   const handleConfirmation = (purchase) => {
     axios

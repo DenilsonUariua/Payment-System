@@ -1,4 +1,4 @@
-import React, { useContext, useState } from "react";
+import { useContext, useState } from "react";
 import Avatar from "@mui/material/Avatar";
 import Button from "@mui/material/Button";
 import CssBaseline from "@mui/material/CssBaseline";
@@ -14,7 +14,7 @@ import { ProductModel } from "./models/Product.model";
 import { productValidationSchema } from "../validationSchemas/product.schema";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
-import { EP_TEXTFIELD, EP_UPLOAD } from "@helpers/form";
+import { EP_TEXTFIELD } from "@helpers/form";
 import { Notification } from "@helpers/notifications";
 import { UserContext } from "@context";
 import { uploadFile } from "@firebaseFolder";

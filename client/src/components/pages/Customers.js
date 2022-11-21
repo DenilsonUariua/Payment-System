@@ -1,43 +1,19 @@
-import * as React from "react";
+import { useEffect, useState, useContext } from "react";
+import { Card } from "antd";
+import { UserContext } from "@context";
+import axios from "axios";
 import { styled, createTheme, ThemeProvider } from "@mui/material/styles";
 import CssBaseline from "@mui/material/CssBaseline";
 import MuiDrawer from "@mui/material/Drawer";
 import Box from "@mui/material/Box";
 import Toolbar from "@mui/material/Toolbar";
 import List from "@mui/material/List";
-import Typography from "@mui/material/Typography";
 import Divider from "@mui/material/Divider";
 import IconButton from "@mui/material/IconButton";
-import Container from "@mui/material/Container";
-import Grid from "@mui/material/Grid";
-import Paper from "@mui/material/Paper";
-import Link from "@mui/material/Link";
 import ChevronLeftIcon from "@mui/icons-material/ChevronLeft";
-import { mainListItems } from "./listItems";
-import Chart from "./Chart";
-import Deposits from "./Deposits";
-import Orders from "./Orders";
-
-function Copyright(props) {
-  return (
-    <Typography
-      variant="body2"
-      color="text.secondary"
-      align="center"
-      {...props}
-    >
-      {"Copyright © "}
-      <Link to={"/"} color="inherit">
-        Kanry Payment
-      </Link>{" "}
-      {new Date().getFullYear()}
-      {"."}
-    </Typography>
-  );
-}
+import { mainListItems } from "./dashboard/listItems";
 
 const drawerWidth = 240;
-
 const Drawer = styled(MuiDrawer, {
   shouldForwardProp: (prop) => prop !== "open"
 })(({ theme, open }) => ({
@@ -66,12 +42,50 @@ const Drawer = styled(MuiDrawer, {
 
 const mdTheme = createTheme();
 
-function DashboardContent() {
-  const [open, setOpen] = React.useState(true);
+const {
+  REACT_APP_AUTH_API_URL_PRODUCTION,
+  REACT_APP_AUTH_API_URL_DEVELOPMENT,
+  NODE_ENV
+} = process.env;
+const gridStyle = {
+  width: "25%",
+  textAlign: "center"
+};
+export const Customers = () => {
+  const { user } = useContext(UserContext);
+  const [open, setOpen] = useState(true);
   const toggleDrawer = () => {
     setOpen(!open);
   };
 
+  const [data, setData] = useState(undefined);
+  function getData() {
+    user &&
+      axios
+        .get(
+          `${
+            NODE_ENV === "production"
+              ? REACT_APP_AUTH_API_URL_PRODUCTION
+              : REACT_APP_AUTH_API_URL_DEVELOPMENT
+          }/customers/${user.buyerId}`
+        )
+        .then((res) => {
+          console.log(res.data);
+          setData(res.data);
+        })
+        .catch((err) => {
+          console.log(err);
+        });
+  }
+
+  // fetch products from api
+  useEffect(() => {
+    getData();
+    return () => {
+      setData(undefined);
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [user]);
   return (
     <ThemeProvider theme={mdTheme}>
       <Box sx={{ display: "flex" }}>
@@ -104,50 +118,33 @@ function DashboardContent() {
             overflow: "auto"
           }}
         >
-          <Toolbar />
-          <Container maxWidth="lg" sx={{ mt: 4, mb: 4 }}>
-            <Grid container spacing={3}>
-              {/* Chart */}
-              <Grid item xs={12} md={8} lg={9}>
-                <Paper
-                  sx={{
-                    p: 2,
-                    display: "flex",
-                    flexDirection: "column",
-                    height: 240
-                  }}
+        <Card title="Customers" style={{ margin: "2%" }}>
+          {data &&
+            data.map((customer) => (
+              <Card.Grid style={gridStyle}>
+                <Card
+                  title={`BUYER: ${customer.buyerId.firstName.toUpperCase()} ${customer.buyerId.lastName.toUpperCase()}`}
+                  bordered={false}
                 >
-                  <Chart />
-                </Paper>
-              </Grid>
-              {/* Recent Deposits */}
-              <Grid item xs={12} md={4} lg={3}>
-                <Paper
-                  sx={{
-                    p: 2,
-                    display: "flex",
-                    flexDirection: "column",
-                    height: 240
-                  }}
-                >
-                  <Deposits />
-                </Paper>
-              </Grid>
-              {/* Recent Orders */}
-              <Grid item xs={12}>
-                <Paper sx={{ p: 2, display: "flex", flexDirection: "column" }}>
-                  <Orders />
-                </Paper>
-              </Grid>
-            </Grid>
-            <Copyright sx={{ pt: 4 }} />
-          </Container>
+                  <div
+                    style={{
+                      display: "flex",
+                      flexDirection: "column",
+                      justifyContent: "start",
+                      alignItems: "start"
+                    }}
+                  >
+                    <p>Buyer email: {customer.buyerId.email}</p>
+                    <p>Product name: {customer.productId.name}</p>
+                    <p>Product price:{` N$${customer.productId.price}`}</p>
+                    <p>Product status:{` ${customer.productId.status}`}</p>
+                  </div>
+                </Card>
+              </Card.Grid>
+            ))}
+        </Card>
         </Box>
       </Box>
     </ThemeProvider>
   );
-}
-
-export function Dashboard() {
-  return <DashboardContent />;
-}
+};

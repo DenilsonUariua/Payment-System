@@ -8,6 +8,7 @@ import { CreateProduct } from "@products/forms";
 import { Pricing, Products } from "@products";
 import { Purchases } from "@purchases";
 import { UserContext } from "./use-context/UserContext";
+import {Customers, Orders} from "@pages";
 
 function App() {
   const [user, setUser] = useState(null);
@@ -36,6 +37,8 @@ function App() {
             <Route path="/products" element={<Products />}></Route>
             <Route path="/purchases" element={<Purchases />}></Route>
             <Route path="/logout" element={<Logout />}></Route>
+            <Route path="/dashboard/customers" element={<Customers />}></Route>
+            <Route path="/dashboard/orders" element={<Orders />}></Route>
           </Routes>
           <Footer />
         </UserContext.Provider>

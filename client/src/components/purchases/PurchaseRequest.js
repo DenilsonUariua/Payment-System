@@ -63,6 +63,7 @@ export const PurchaseRequest = () => {
     return () => {
       setData(undefined);
     };
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const handleRowSelected = React.useCallback((state) => {

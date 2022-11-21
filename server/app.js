@@ -16,9 +16,9 @@ const { PORT } = process.env;
 const app = express();
 app.use(
   cors({
-    origin: ["http://localhost:3000"],
+    origin: ["http://localhost:3006"],
     methods: ["GET,HEAD,PUT,PATCH,POST,DELETE"],
-    credentials: true,
+    credentials: true
   })
 );
 const httpServer = createServer(app);
@@ -51,7 +51,7 @@ app.post("/login", async (req, res) => {
           lastName: user.lastName,
           email: user.email,
           buyerId: user._id,
-          sellerId: user._id,
+          sellerId: user._id
         });
       }
     });
@@ -75,7 +75,7 @@ app
       email: req.body.email,
       password: req.body.password,
       buyerId: buyerId,
-      sellerId: sellerId,
+      sellerId: sellerId
     });
     user.save(async (err, docs) => {
       if (err) {
@@ -87,7 +87,7 @@ app
           lastName: docs.lastName,
           email: docs.email,
           buyerId: docs._id,
-          sellerId: docs._id,
+          sellerId: docs._id
         });
       }
     });
@@ -104,6 +104,36 @@ app.route("/products").get((req, res) => {
         console.log("Success: ", docs);
         res.status(200).send(docs);
       }
+    });
+});
+app.route("/orders/:id").get((req, res) => {
+  Purchase.find({ sellerId: req.params.id })
+    .populate("productId")
+    .populate("buyerId")
+    .then((docs) => {
+      const awaitingDelivery = docs.filter(
+        (doc) =>
+          doc.status === "Paid Awaiting Delivery" || doc.status === "Pending"
+      );
+      console.log("Success: ", awaitingDelivery);
+      res.status(200).send(awaitingDelivery);
+    })
+    .catch((err) => {
+      console.log("Error: ", err);
+      res.status(500).send("Error fetching purchases");
+    });
+});
+app.route("/customers/:id").get((req, res) => {
+  Purchase.find({ sellerId: req.params.id })
+    .populate("productId")
+    .populate("buyerId")
+    .then((docs) => {
+      console.log("Success: ", docs);
+      res.status(200).send(docs);
+    })
+    .catch((err) => {
+      console.log("Error: ", err);
+      res.status(500).send("Error fetching purchases");
     });
 });
 app.route("/purchases/buyer/:id").get((req, res) => {
@@ -287,7 +317,7 @@ app.route("/product").post((req, res) => {
     price: req.body.price,
     description: req.body.description,
     image: req.body.image,
-    sellerId: req.body.sellerId,
+    sellerId: req.body.sellerId
   });
   product.save(async (err, docs) => {
     if (err) {
