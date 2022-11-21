@@ -10,10 +10,7 @@ const {
   REACT_APP_FIREBASE_APPID,
   REACT_APP_FIREBASE_MEASUREMENTID
 } = process.env;
-// Follow this pattern to import other Firebase services
-// import { } from 'firebase/<service>';
 
-// TODO: Replace the following with your app's Firebase project configuration
 const firebaseConfig = {
   apiKey: REACT_APP_FIREBASE_AUTH_KEY,
   authDomain: REACT_APP_FIREBASE_AUTH_DOMAIN,
