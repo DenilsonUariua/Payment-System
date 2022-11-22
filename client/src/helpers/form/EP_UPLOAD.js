@@ -1,6 +1,6 @@
 import { UploadOutlined } from "@ant-design/icons";
-import { Button, message, Upload } from "antd";
-import React, { useState } from "react";
+import { Button, Upload } from "antd";
+import { useState } from "react";
 import { uploadFile } from "@firebaseFolder";
 
 export const EP_UPLOAD = () => {

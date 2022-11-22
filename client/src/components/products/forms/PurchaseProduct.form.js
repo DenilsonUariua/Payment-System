@@ -8,9 +8,8 @@ import DialogActions from "@mui/material/DialogActions";
 import Grid from "@mui/material/Grid";
 import { UserContext } from "@context";
 import { uploadFile } from "@firebaseFolder";
-import { EP_TEXTFIELD, EP_UPLOAD } from "@helpers/form";
+import { EP_UPLOAD } from "@helpers/form";
 import { Formik, Form } from "formik";
-import Container from "@mui/material/Container";
 
 import axios from "axios";
 
@@ -23,7 +22,6 @@ export function PurchaseProduct(props) {
   const { onClose, selectedProduct, open, getData } = props;
   const { user } = useContext(UserContext);
   const [image, setImage] = useState("");
-  const [url, setUrl] = useState("");
   const [uploading, setUploading] = useState(false);
   async function upload(file) {
     if (image == null) return;
@@ -164,7 +162,6 @@ export function PurchaseProduct(props) {
                   setImage(e.target.files[0]);
                   const url = await upload(e.target.files[0]);
                   values.image = url;
-                  setUrl(url);
                   setUploading(false);
                 }}
                 style={{ width: "100%", overflow: "hidden" }}

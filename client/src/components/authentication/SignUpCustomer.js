@@ -14,7 +14,6 @@ import { customerModel } from "./models/customerModel";
 import { useNavigate } from "react-router-dom";
 import { UserContext } from "../../use-context/UserContext";
 import { Notification } from "@helpers/notifications";
-import { signupValidationSchema } from "./validationSchemas/signup.schema";
 import { EP_TEXTFIELD } from "@helpers/form";
 import axios from "axios";
 import { uploadFile } from "@firebaseFolder";
@@ -49,7 +48,6 @@ export function SignUpCustomer() {
 
   const [id, setId] = useState("");
   const [waterElec, setWaterElec] = useState("");
-  const [url, setUrl] = useState("");
   const [uploading, setUploading] = useState(false);
   async function uploadID(file) {
     if (id == null) return;
@@ -242,6 +240,7 @@ export function SignUpCustomer() {
                   fullWidth
                   variant="contained"
                   sx={{ mt: 3, mb: 2 }}
+                  disabled={uploading}
                 >
                   Sign Up As Customer
                 </Button>

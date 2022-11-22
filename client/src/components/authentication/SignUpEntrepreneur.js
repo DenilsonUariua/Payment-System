@@ -14,7 +14,6 @@ import { entrepreneurModel } from "./models/entrepreneurModel";
 import { useNavigate } from "react-router-dom";
 import { UserContext } from "../../use-context/UserContext";
 import { Notification } from "@helpers/notifications";
-import { signupValidationSchema } from "./validationSchemas/signup.schema";
 import { EP_TEXTFIELD } from "@helpers/form";
 import axios from "axios";
 import { uploadFile } from "@firebaseFolder";
