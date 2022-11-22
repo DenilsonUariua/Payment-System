@@ -56,7 +56,9 @@ export function Purchases() {
   };
 
   return (
-    <Box sx={{ bgcolor: "transparent", marginTop: "1rem" }}>
+    <Box
+      sx={{ bgcolor: "transparent", marginTop: "1rem", marginBottom: "40vh" }}
+    >
       <AppBar position="static">
         <Tabs
           value={value}

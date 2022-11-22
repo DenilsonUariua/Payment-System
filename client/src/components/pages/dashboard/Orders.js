@@ -77,8 +77,8 @@ export default function Orders() {
           <TableBody>
             {products.map((row) => (
               <TableRow key={row._id}>
-                <TableCell>{`${row.sellerId.firstName} ${row.sellerId.lastName}`}</TableCell>
-                <TableCell>{`${row.buyerId.firstName} ${row.buyerId.lastName}`}</TableCell>
+                <TableCell>{`${row.sellerId.fullname} `}</TableCell>
+                <TableCell>{`${row.buyerId.fullname}`}</TableCell>
                 <TableCell>{row.productId.name}</TableCell>
                 <TableCell>{row.purchaseId}</TableCell>
                 <TableCell>{row.productId.description}</TableCell>

@@ -1,11 +1,11 @@
 .App {
   text-align: center;
-}
-body {
   background: url(./assets/bgApp.jpg);
   background-size: cover;
   background-repeat: no-repeat;
   backdrop-filter: blur(1px);
+}
+body {
 }
 .App-logo {
   height: 40vmin;

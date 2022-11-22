@@ -1,0 +1,17 @@
+export const entrepreneurModel = {
+    fullname: '',
+    idNumber: '',
+    cellphone: '',
+    altCellphone: '',
+    email: '',
+    address: '',
+    businessName: '',
+    businessResgistrationNo: '',
+    socialSecurityNumber: '',
+    password: '',
+    idUrl: '',
+    waterElecBillUrl: '',
+    socialSecurityEmployerCertUrl: '',
+    certificateOfIncorporationUrl: '',
+    policeClearanceUrl: '',
+};

@@ -1,24 +1,26 @@
 require("dotenv").config();
 
-var express = require("express");
-var bodyParser = require("body-parser");
-var cookieParser = require("cookie-parser");
-var morgan = require("morgan");
-var User = require("./models/User");
-var Product = require("./models/Product");
-var Purchase = require("./models/Purchase");
+const express = require("express");
+const bodyParser = require("body-parser");
+const cookieParser = require("cookie-parser");
+const morgan = require("morgan");
+const User = require("./models/User");
+const Product = require("./models/Product");
+const Customer = require("./models/Customer");
+const Entrepreneur = require("./models/Entrepreneur");
+const Purchase = require("./models/Purchase");
 const cors = require("cors");
-var http = require("http");
+const http = require("http");
 const { createServer } = require("http");
-var uniqid = require("uniqid");
+const uniqid = require("uniqid");
 const { PORT } = process.env;
 
 const app = express();
 app.use(
   cors({
-    origin: ["http://localhost:3006"],
+    origin: ["http://localhost:3000"],
     methods: ["GET,HEAD,PUT,PATCH,POST,DELETE"],
-    credentials: true
+    credentials: true,
   })
 );
 const httpServer = createServer(app);
@@ -33,6 +35,56 @@ app.get("/login", (req, res) => {
   res.send("/login");
 });
 
+app.post("/customer/signin", async (req, res) => {
+  let email = req.body.email,
+    password = req.body.password;
+
+  try {
+    var user = await Customer.findOne({ email: email }).exec();
+    if (!user) {
+      res.status(401).send("User not found");
+    }
+    user.comparePassword(password, (error, match) => {
+      if (!match) {
+        return res.status(401).send("Wrong Password");
+      } else {
+        return res.status(200).send({
+          fullname: user.fullname,
+          email: user.email,
+          buyerId: user._id,
+          sellerId: user._id,
+        });
+      }
+    });
+  } catch (error) {
+    console.log(error);
+  }
+});
+app.post("/entrepreneur/signin", async (req, res) => {
+  let email = req.body.email,
+    password = req.body.password;
+
+  try {
+    var user = await Entrepreneur.findOne({ email: email }).exec();
+    if (!user) {
+      res.status(401).send("User not found");
+    }
+    user.comparePassword(password, (error, match) => {
+      if (!match) {
+        return res.status(401).send("Wrong Password");
+      } else {
+        return res.status(200).send({
+          fullname: user.fullname,
+          email: user.email,
+          buyerId: user._id,
+          sellerId: user._id,
+        });
+      }
+    });
+  } catch (error) {
+    console.log(error);
+  }
+});
 app.post("/login", async (req, res) => {
   let email = req.body.email,
     password = req.body.password;
@@ -51,7 +103,7 @@ app.post("/login", async (req, res) => {
           lastName: user.lastName,
           email: user.email,
           buyerId: user._id,
-          sellerId: user._id
+          sellerId: user._id,
         });
       }
     });
@@ -75,7 +127,7 @@ app
       email: req.body.email,
       password: req.body.password,
       buyerId: buyerId,
-      sellerId: sellerId
+      sellerId: sellerId,
     });
     user.save(async (err, docs) => {
       if (err) {
@@ -87,11 +139,90 @@ app
           lastName: docs.lastName,
           email: docs.email,
           buyerId: docs._id,
-          sellerId: docs._id
+          sellerId: docs._id,
         });
       }
     });
   });
+
+app.route("/create/customer").post((req, res) => {
+  const {
+    fullname,
+    idNumber,
+    cellphone,
+    altCellphone,
+    email,
+    address,
+    password,
+    idUrl,
+    waterElecBillUrl,
+  } = req.body;
+  let customer = new Customer({
+    fullname: fullname,
+    idNumber: idNumber,
+    cellphone: cellphone,
+    altCellphone: altCellphone,
+    email: email,
+    address: address,
+    password: password,
+    idUrl: idUrl,
+    waterElecBillUrl: waterElecBillUrl,
+  });
+  customer.save((err, docs) => {
+    if (err) {
+      console.log("Error: ", err);
+      res.status(500).send("Error registering new customer please try again.");
+    } else {
+      res.status(200).send(docs);
+    }
+  });
+});
+app.route("/create/entrepreneur").post((req, res) => {
+  const {
+    fullname,
+    idNumber,
+    cellphone,
+    altCellphone,
+    email,
+    address,
+    businessName,
+    businessResgistrationNo,
+    socialSecurityNumber,
+    password,
+    idUrl,
+    waterElecBillUrl,
+    socialSecurityEmployerCertUrl,
+    certificateOfIncorporationUrl,
+    policeClearanceUrl,
+  } = req.body;
+  const entrepreneur = new Entrepreneur({
+    fullname: fullname,
+    idNumber: idNumber,
+    cellphone: cellphone,
+    altCellphone: altCellphone,
+    email: email,
+    address: address,
+    businessName: businessName,
+    businessResgistrationNo: businessResgistrationNo,
+    socialSecurityNumber: socialSecurityNumber,
+    password: password,
+    idUrl: idUrl,
+    waterElecBillUrl: waterElecBillUrl,
+    socialSecurityEmployerCertUrl: socialSecurityEmployerCertUrl,
+    certificateOfIncorporationUrl: certificateOfIncorporationUrl,
+    policeClearanceUrl: policeClearanceUrl,
+  });
+  entrepreneur.save((err, docs) => {
+    if (err) {
+      console.log("Error: ", err);
+      res
+        .status(500)
+        .send("Error registering new entrepreneur please try again.");
+    } else {
+      res.status(200).send(docs);
+    }
+  });
+});
 
 app.route("/products").get((req, res) => {
   Product.find({ status: "Available" })
@@ -317,7 +448,7 @@ app.route("/product").post((req, res) => {
     price: req.body.price,
     description: req.body.description,
     image: req.body.image,
-    sellerId: req.body.sellerId
+    sellerId: req.body.sellerId,
   });
   product.save(async (err, docs) => {
     if (err) {

@@ -103,7 +103,7 @@ export const UserPurchases = () => {
   const columns = [
     {
       name: "Seller",
-      selector: (row) => `${row.sellerId.firstName} ${row.sellerId.lastName}`,
+      selector: (row) => `${row.sellerId.fullname}`,
       sortable: true
     },
     {

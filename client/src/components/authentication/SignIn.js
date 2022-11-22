@@ -1,162 +1,47 @@
-import { useContext } from "react";
-import Avatar from "@mui/material/Avatar";
-import Button from "@mui/material/Button";
-import CssBaseline from "@mui/material/CssBaseline";
-import { Link } from "react-router-dom";
-import Grid from "@mui/material/Grid";
+import React, { useState, Fragment } from "react";
 import Box from "@mui/material/Box";
-import Typography from "@mui/material/Typography";
+import InputLabel from "@mui/material/InputLabel";
+import MenuItem from "@mui/material/MenuItem";
+import FormControl from "@mui/material/FormControl";
+import Select from "@mui/material/Select";
+import { SignInCustomer } from "./SignInCustomer";
+import { SignInEntrepreneur } from "./SignInEntrepreneur";
 import Container from "@mui/material/Container";
-import { createTheme, ThemeProvider } from "@mui/material/styles";
-import { Formik, Form } from "formik";
-import { userModel } from "./models/userModel";
-import { useNavigate } from "react-router-dom";
-import { UserContext } from "../../use-context/UserContext";
-import { Notification } from "@helpers/notifications";
-import { signinValidationSchema } from "./validationSchemas/signin.schema";
-import { EP_TEXTFIELD } from "@helpers/form";
-
-import axios from "axios";
-// get api url
-const {
-  REACT_APP_AUTH_API_URL_PRODUCTION,
-  REACT_APP_AUTH_API_URL_DEVELOPMENT,
-  NODE_ENV
-} = process.env;
-
-function Copyright(props) {
-  return (
-    <Typography
-      variant="body2"
-      color="text.secondary"
-      align="center"
-      {...props}
-    >
-      {"Copyright © "}
-      <Link color="inherit" href="https://mui.com/">
-        Kanry Payment
-      </Link>{" "}
-      {new Date().getFullYear()}
-      {"."}
-    </Typography>
-  );
-}
-
-const theme = createTheme();
-
 export function SignIn() {
-  const navigate = useNavigate();
-  const { setUser } = useContext(UserContext);
+  const [type, setType] = useState("");
+
+  const handleChange = (event) => {
+    setType(event.target.value);
+  };
 
   return (
-    <ThemeProvider theme={theme}>
-      <Container
-        component="main"
-        maxWidth="xs"
-        style={{
-          boxShadow: "0 0 16px 0 rgba(0,0,0,0.7)",
-          backgroundColor: "white",
-        }}
-      >
-        <CssBaseline />
-        <Box
-          sx={{
-            marginTop: 8,
-            display: "flex",
-            flexDirection: "column",
-            alignItems: "center"
-          }}
-        >
-          <Avatar sx={{ m: 1, bgcolor: "primary.main" }}></Avatar>
-          <Typography component="h1" variant="h5">
-            Sign in
-          </Typography>
-          <Formik
-            initialValues={userModel}
-            validationSchema={signinValidationSchema}
-            validateOnChange={true}
-            validateOnBlur={true}
-            onSubmit={(values, { setSubmitting }) => {
-              axios
-                .post(
-                  `${
-                    NODE_ENV === "production"
-                      ? REACT_APP_AUTH_API_URL_PRODUCTION
-                      : REACT_APP_AUTH_API_URL_DEVELOPMENT
-                  }/login`,
-                  values
-                )
-                .then((res) => {
-                  const { data } = res;
-                  localStorage.setItem("user", JSON.stringify(data));
-                  setUser(data);
-                  Notification("Success", `Welcome back ${data.firstName}`);
-                  setSubmitting(false);
-                  navigate("/products", { state: { data } }, { replace: true });
-                })
-                .catch((err) => {
-                  Notification("Error", `Incorrect email or password`);
-                  console.log(err);
-                  setSubmitting(false);
-                });
-            }}
+    <Container
+      style={{
+        display: "flex",
+        justifyContent: "center",
+        alignItems: "center",
+        flexDirection: "column",
+      }}
+    >
+      <Box sx={{ minWidth: "40%", backgroundColor: "white", margin: "2%" }}>
+        <FormControl fullWidth>
+          <InputLabel id="demo-simple-select-label">
+            Sign In As A Customer or Entrepreneur
+          </InputLabel>
+          <Select
+            labelId="demo-simple-select-label"
+            id="demo-simple-select"
+            value={type}
+            label="Sign Up As A Customer or Entrepreneur"
+            onChange={handleChange}
+            defaultValue="Customer"
           >
-            {({
-              values,
-              errors,
-              touched,
-              handleChange,
-              handleBlur,
-              handleSubmit,
-              isSubmitting
-              /* and other goodies */
-            }) => (
-              <Form onSubmit={handleSubmit}>
-                <EP_TEXTFIELD
-                  width={12}
-                  name="email"
-                  required={true}
-                  handleChange={handleChange}
-                  handleBlur={handleBlur}
-                  label="Email Address"
-                  errors={errors}
-                  touched={touched}
-                  value={values.email}
-                  disabled={isSubmitting}
-                />
-                {/* add space */}
-                <Box sx={{ mt: 1 }} />
-                <EP_TEXTFIELD
-                  type="password"
-                  name="password"
-                  required={true}
-                  handleChange={handleChange}
-                  handleBlur={handleBlur}
-                  label="Password"
-                  errors={errors}
-                  touched={touched}
-                  value={values.password}
-                  disabled={isSubmitting}
-                />
-                <Button
-                  type="submit"
-                  fullWidth
-                  variant="contained"
-                  sx={{ mt: 3, mb: 2 }}
-                >
-                  Sign In
-                </Button>
-              </Form>
-            )}
-          </Formik>
-          <Grid container>
-            <Grid item>
-              <Link to={"/signup"}>{"Don't have an account? Sign Up"}</Link>
-            </Grid>
-          </Grid>
-        </Box>
-        <Copyright sx={{ mt: 8, mb: 4 }} />
-      </Container>
-    </ThemeProvider>
+            <MenuItem value={"Customer"}>Customer</MenuItem>
+            <MenuItem value={"Entrepreneur"}>Entrepreneur</MenuItem>
+          </Select>
+        </FormControl>
+      </Box>
+      {type === "Entrepreneur" ? <SignInEntrepreneur /> : <SignInCustomer />}
+    </Container>
   );
 }

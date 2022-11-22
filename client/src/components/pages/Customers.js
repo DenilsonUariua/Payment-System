@@ -123,7 +123,7 @@ export const Customers = () => {
             data.map((customer) => (
               <Card.Grid style={gridStyle}>
                 <Card
-                  title={`BUYER: ${customer.buyerId.firstName.toUpperCase()} ${customer.buyerId.lastName.toUpperCase()}`}
+                  title={`BUYER: ${customer.buyerId.fullname.toUpperCase()}`}
                   bordered={false}
                 >
                   <div

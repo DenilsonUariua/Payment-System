@@ -80,9 +80,7 @@ export function PurchaseProduct(props) {
             style={{ paddingLeft: "3rem" }}
           >
             Seller name:{" "}
-            {`${selectedProduct && selectedProduct.sellerId.firstName} ${
-              selectedProduct && selectedProduct.sellerId.lastName
-            }`}
+            {`${selectedProduct && selectedProduct.sellerId.fullname}`}
           </Typography>
         </Grid>
         <Grid item xs={12} sm={12}>

@@ -64,6 +64,7 @@ export function CreateProduct() {
         style={{
           boxShadow: "0 0 16px 0 rgba(0,0,0,0.7)",
           backgroundColor: "white",
+          marginBottom: "20vh"
         }}
       >
         <CssBaseline />

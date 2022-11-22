@@ -102,7 +102,7 @@ export const PurchaseRequest = () => {
   const columns = [
     {
       name: "Buyer name",
-      selector: (row) => `${row.buyerId.firstName} ${row.buyerId.lastName}`,
+      selector: (row) => `${row.buyerId.fullname}`,
       sortable: true
     },
     {

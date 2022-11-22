@@ -28,12 +28,12 @@ const productSchema = mongoose.Schema(
     },
     sellerId: {
       type: mongoose.Schema.Types.ObjectId,
-      ref: "user",
+      ref: "entrepreneur",
       required: true
     },
     buyerId: {
       type: mongoose.Schema.Types.ObjectId,
-      ref: "user"
+      ref: "customer",
     },
     status: {
       type: String,

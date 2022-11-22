@@ -10,7 +10,7 @@ import { PurchaseProduct } from "./forms";
 const {
   REACT_APP_AUTH_API_URL_PRODUCTION,
   REACT_APP_AUTH_API_URL_DEVELOPMENT,
-  NODE_ENV
+  NODE_ENV,
 } = process.env;
 const theme = createTheme();
 
@@ -84,35 +84,33 @@ export const Products = () => {
       </Button>
     );
   }, [data, selectedRows, toggleCleared]);
-  if (data === undefined) {
-    return <div>Loading...</div>;
-  }
+  
 
   const columns = [
     {
       name: "Name",
       selector: (row) => row.name,
-      sortable: true
+      sortable: true,
     },
     {
       name: "Seller",
-      selector: (row) => `${row.sellerId.firstName} ${row.sellerId.lastName}`,
-      sortable: true
+      selector: (row) => `${row.sellerId.fullname}`,
+      sortable: true,
     },
     {
       name: "Price",
       selector: (row) => `N$${row.price}`,
-      sortable: true
+      sortable: true,
     },
     {
       name: "Description",
       selector: (row) => row.description,
-      sortable: true
+      sortable: true,
     },
     {
       name: "Status",
       selector: (row) => row.status,
-      sortable: true
+      sortable: true,
     },
     {
       name: "Actions",
@@ -132,8 +130,8 @@ export const Products = () => {
           </Link>
         </Fragment>
       ),
-      sortable: true
-    }
+      sortable: true,
+    },
   ];
 
   return (
@@ -143,7 +141,10 @@ export const Products = () => {
         maxWidth="lg"
         style={{
           marginTop: "2%",
-          boxShadow: "0 0 16px 0 rgba(0,0,0,0.7)"
+          marginBottom: "58vh",
+          boxShadow: "0 0 16px 0 rgba(0,0,0,0.7)",
+          maxheight: 600,
+          overflow: "auto hidden",
         }}
       >
         <PurchaseProduct
