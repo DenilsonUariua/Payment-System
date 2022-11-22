@@ -99,7 +99,7 @@ export function CreateProduct() {
                 .post(`${REACT_APP_PAYMENTS_API_URL}/create-product`, values)
                 .then((res) => {
                   console.log("Response: ", res);
-                  // values.stripePriceId = res.data.stripePriceId;
+                  values.stripePriceId = res.data.priceObject.id;
                   axios
                     .post(
                       `${

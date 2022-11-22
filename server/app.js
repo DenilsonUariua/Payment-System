@@ -467,6 +467,7 @@ app.route("/product").post((req, res) => {
     description: req.body.description,
     image: req.body.image,
     sellerId: req.body.sellerId,
+    stripePriceId: req.body.stripePriceId
   });
   product.save(async (err, docs) => {
     if (err) {
