@@ -1,4 +1,4 @@
-import { useContext, useState } from "react";
+import { useContext, useState, useEffect } from "react";
 import AppBar from "@mui/material/AppBar";
 import Box from "@mui/material/Box";
 import Toolbar from "@mui/material/Toolbar";
@@ -15,12 +15,12 @@ import Logo from "../../assets/icon.png";
 import { Link } from "react-router-dom";
 import { UserContext } from "../../use-context/UserContext";
 
-const authenticatedPages = [
-  "Dashboard",
-  "Products",
-  "Purchases",
-  "Create Product"
-];
+// const authenticatedPages = [
+//   "Dashboard",
+//   "Products",
+//   "Purchases",
+//   "Create-Product",
+// ];
 const unauthenticatedPages = ["Signin", "Signup"];
 const settingsAuthenticated = ["Dashboard", "Profile", "Account", "Logout"];
 const settingsUnathenticaed = ["Home", "Signin", "Signup"];
@@ -29,6 +29,22 @@ export const Navbar = () => {
   const [anchorElNav, setAnchorElNav] = useState(null);
   const [anchorElUser, setAnchorElUser] = useState(null);
   const { user } = useContext(UserContext);
+  const [authenticatedPages, setAuthenticated] = useState([
+    "Dashboard",
+    "Products",
+    "Purchases",
+  ]);
+  useEffect(() => {
+    if (user) {
+      user.type === "Entrepreneur" &&
+        setAuthenticated([
+          "Dashboard",
+          "Products",
+          "Purchases",
+          "Create-Product",
+        ]);
+    }
+  }, [user]);
 
   const handleOpenNavMenu = (event) => {
     setAnchorElNav(event.currentTarget);
@@ -36,7 +52,6 @@ export const Navbar = () => {
   const handleOpenUserMenu = (event) => {
     setAnchorElUser(event.currentTarget);
   };
-
   const handleCloseNavMenu = () => {
     setAnchorElNav(null);
   };
@@ -71,17 +86,17 @@ export const Navbar = () => {
               anchorEl={anchorElNav}
               anchorOrigin={{
                 vertical: "bottom",
-                horizontal: "left"
+                horizontal: "left",
               }}
               keepMounted
               transformOrigin={{
                 vertical: "top",
-                horizontal: "left"
+                horizontal: "left",
               }}
               open={Boolean(anchorElNav)}
               onClose={handleCloseNavMenu}
               sx={{
-                display: { xs: "block", md: "none" }
+                display: { xs: "block", md: "none" },
               }}
             >
               {user !== null
@@ -142,12 +157,12 @@ export const Navbar = () => {
               anchorEl={anchorElUser}
               anchorOrigin={{
                 vertical: "top",
-                horizontal: "right"
+                horizontal: "right",
               }}
               keepMounted
               transformOrigin={{
                 vertical: "top",
-                horizontal: "right"
+                horizontal: "right",
               }}
               open={Boolean(anchorElUser)}
               onClose={handleCloseUserMenu}

@@ -4,5 +4,5 @@ export const ProductModel = {
     price: undefined,
     image: "",
     sellerId: "",
-   
+    stripePriceId: "",
 };

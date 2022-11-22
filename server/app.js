@@ -53,6 +53,7 @@ app.post("/customer/signin", async (req, res) => {
           email: user.email,
           buyerId: user._id,
           sellerId: user._id,
+          type: user.type,
         });
       }
     });
@@ -78,6 +79,7 @@ app.post("/entrepreneur/signin", async (req, res) => {
           email: user.email,
           buyerId: user._id,
           sellerId: user._id,
+          type: user.type,
         });
       }
     });
@@ -104,6 +106,7 @@ app.post("/login", async (req, res) => {
           email: user.email,
           buyerId: user._id,
           sellerId: user._id,
+          type: user.type,
         });
       }
     });
@@ -128,6 +131,7 @@ app
       password: req.body.password,
       buyerId: buyerId,
       sellerId: sellerId,
+      type: user.type,
     });
     user.save(async (err, docs) => {
       if (err) {
@@ -173,7 +177,13 @@ app.route("/create/customer").post((req, res) => {
       console.log("Error: ", err);
       res.status(500).send("Error registering new customer please try again.");
     } else {
-      res.status(200).send(docs);
+      res.status(200).send({
+        fullname: docs.fullname,
+        email: docs.email,
+        buyerId: docs._id,
+        sellerId: docs._id,
+        type: docs.type,
+      });
     }
   });
 });
@@ -219,7 +229,15 @@ app.route("/create/entrepreneur").post((req, res) => {
         .status(500)
         .send("Error registering new entrepreneur please try again.");
     } else {
-      res.status(200).send(docs);
+      res
+        .status(200)
+        .send({
+          fullname: docs.fullname,
+          email: docs.email,
+          buyerId: docs._id,
+          sellerId: docs._id,
+          type: docs.type,
+        });
     }
   });
 });

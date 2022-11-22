@@ -22,6 +22,7 @@ import { uploadFile } from "@firebaseFolder";
 const {
   REACT_APP_AUTH_API_URL_PRODUCTION,
   REACT_APP_AUTH_API_URL_DEVELOPMENT,
+  REACT_APP_PAYMENTS_API_URL,
   NODE_ENV,
 } = process.env;
 
@@ -64,7 +65,7 @@ export function CreateProduct() {
         style={{
           boxShadow: "0 0 16px 0 rgba(0,0,0,0.7)",
           backgroundColor: "white",
-          marginBottom: "20vh"
+          marginBottom: "20vh",
         }}
       >
         <CssBaseline />
@@ -92,25 +93,30 @@ export function CreateProduct() {
               actions.setSubmitting(true);
               values.image = url;
               values.sellerId = user.sellerId;
-              // submit data to api
-              axios
-                .post(
-                  `${
-                    NODE_ENV === "production"
-                      ? REACT_APP_AUTH_API_URL_PRODUCTION
-                      : REACT_APP_AUTH_API_URL_DEVELOPMENT
-                  }/product`,
-                  values
-                )
-                .then(() => {
-                  Notification("Success", "Product created successfully");
-                  actions.resetForm();
-                  setTimeout(() => {
-                    actions.setSubmitting(false);
-                    navigate("/products");
-                  }, 1000);
 
-                  // pass data to login page
+              // submit data to api
+              await axios
+                .post(`${REACT_APP_PAYMENTS_API_URL}/create-product`, values)
+                .then((res) => {
+                  console.log("Response: ", res);
+                  // values.stripePriceId = res.data.stripePriceId;
+                  axios
+                    .post(
+                      `${
+                        NODE_ENV === "production"
+                          ? REACT_APP_AUTH_API_URL_PRODUCTION
+                          : REACT_APP_AUTH_API_URL_DEVELOPMENT
+                      }/product`,
+                      values
+                    )
+                    .then(async (res) => {
+                      Notification("Success", "Product created successfully");
+                      actions.resetForm();
+                      setTimeout(() => {
+                        actions.setSubmitting(false);
+                        // navigate("/products");
+                      }, 1000);
+                    });
                 })
                 .catch((err) => {
                   Notification("Error", "Product not created");
