@@ -1,4 +1,4 @@
-import React, { useEffect, useState, Fragment } from "react";
+import React, { useEffect, useState, Fragment, useContext } from "react";
 import DataTable from "react-data-table-component";
 import Button from "@mui/material/Button";
 import Container from "@mui/material/Container";
@@ -6,11 +6,13 @@ import { createTheme, ThemeProvider } from "@mui/material/styles";
 import { Link } from "react-router-dom";
 import axios from "axios";
 import { PurchaseProduct } from "./forms";
+import { UserContext } from "@context";
+
 // get api url
 const {
   REACT_APP_AUTH_API_URL_PRODUCTION,
   REACT_APP_AUTH_API_URL_DEVELOPMENT,
-  NODE_ENV,
+  NODE_ENV
 } = process.env;
 const theme = createTheme();
 
@@ -21,6 +23,7 @@ export const Products = () => {
   const [data, setData] = useState(undefined);
   const [open, setOpen] = useState(false);
   const [selectedProduct, setSelectedProduct] = useState(undefined);
+  const { user } = useContext(UserContext);
 
   const handleClickOpen = () => {
     setOpen(true);
@@ -84,33 +87,32 @@ export const Products = () => {
       </Button>
     );
   }, [data, selectedRows, toggleCleared]);
-  
 
   const columns = [
     {
       name: "Name",
       selector: (row) => row.name,
-      sortable: true,
+      sortable: true
     },
     {
       name: "Seller",
       selector: (row) => `${row.sellerId.fullname}`,
-      sortable: true,
+      sortable: true
     },
     {
       name: "Price",
       selector: (row) => `N$${row.price}`,
-      sortable: true,
+      sortable: true
     },
     {
       name: "Description",
       selector: (row) => row.description,
-      sortable: true,
+      sortable: true
     },
     {
       name: "Status",
       selector: (row) => row.status,
-      sortable: true,
+      sortable: true
     },
     {
       name: "Actions",
@@ -118,7 +120,7 @@ export const Products = () => {
         <Fragment>
           <Link>
             <Button
-              disabled={row.status !== "Available"}
+              disabled={user.type === "Entrepreneur"}
               variant="outlined"
               onClick={() => {
                 setSelectedProduct(row);
@@ -130,8 +132,8 @@ export const Products = () => {
           </Link>
         </Fragment>
       ),
-      sortable: true,
-    },
+      sortable: true
+    }
   ];
 
   return (
@@ -144,7 +146,7 @@ export const Products = () => {
           marginBottom: "58vh",
           boxShadow: "0 0 16px 0 rgba(0,0,0,0.7)",
           maxheight: 600,
-          overflow: "auto hidden",
+          overflow: "auto hidden"
         }}
       >
         <PurchaseProduct

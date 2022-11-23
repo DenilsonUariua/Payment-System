@@ -114,7 +114,7 @@ export function CreateProduct() {
                       actions.resetForm();
                       setTimeout(() => {
                         actions.setSubmitting(false);
-                        // navigate("/products");
+                        navigate("/products");
                       }, 1000);
                     });
                 })

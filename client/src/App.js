@@ -8,7 +8,8 @@ import { CreateProduct } from "@products/forms";
 import { Pricing, Products } from "@products";
 import { Purchases } from "@purchases";
 import { UserContext } from "./use-context/UserContext";
-import {Customers, Orders} from "@pages";
+import { Customers, Orders } from "@pages";
+import { Checkout } from "@checkout";
 
 function App() {
   const [user, setUser] = useState(null);
@@ -39,6 +40,7 @@ function App() {
             <Route path="/logout" element={<Logout />}></Route>
             <Route path="/dashboard/customers" element={<Customers />}></Route>
             <Route path="/dashboard/orders" element={<Orders />}></Route>
+            <Route path="/checkout" element={<Checkout />}></Route>
           </Routes>
           <Footer />
         </UserContext.Provider>

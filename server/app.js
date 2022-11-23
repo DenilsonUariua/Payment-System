@@ -4,15 +4,14 @@ const express = require("express");
 const bodyParser = require("body-parser");
 const cookieParser = require("cookie-parser");
 const morgan = require("morgan");
-const User = require("./models/User");
 const Product = require("./models/Product");
 const Customer = require("./models/Customer");
 const Entrepreneur = require("./models/Entrepreneur");
 const Purchase = require("./models/Purchase");
+const Payment = require("./models/Payment");
 const cors = require("cors");
 const http = require("http");
 const { createServer } = require("http");
-const uniqid = require("uniqid");
 const { PORT } = process.env;
 
 const app = express();
@@ -20,7 +19,7 @@ app.use(
   cors({
     origin: ["http://localhost:3000"],
     methods: ["GET,HEAD,PUT,PATCH,POST,DELETE"],
-    credentials: true,
+    credentials: true
   })
 );
 const httpServer = createServer(app);
@@ -31,9 +30,6 @@ app.use(cookieParser());
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(morgan("dev"));
-app.get("/login", (req, res) => {
-  res.send("/login");
-});
 
 app.post("/customer/signin", async (req, res) => {
   let email = req.body.email,
@@ -53,7 +49,7 @@ app.post("/customer/signin", async (req, res) => {
           email: user.email,
           buyerId: user._id,
           sellerId: user._id,
-          type: user.type,
+          type: user.type
         });
       }
     });
@@ -79,7 +75,7 @@ app.post("/entrepreneur/signin", async (req, res) => {
           email: user.email,
           buyerId: user._id,
           sellerId: user._id,
-          type: user.type,
+          type: user.type
         });
       }
     });
@@ -87,67 +83,6 @@ app.post("/entrepreneur/signin", async (req, res) => {
     console.log(error);
   }
 });
-app.post("/login", async (req, res) => {
-  let email = req.body.email,
-    password = req.body.password;
-
-  try {
-    var user = await User.findOne({ email: email }).exec();
-    if (!user) {
-      res.status(401).send("User not found");
-    }
-    user.comparePassword(password, (error, match) => {
-      if (!match) {
-        return res.status(401).send("Wrong Password");
-      } else {
-        return res.status(200).send({
-          firstName: user.firstName,
-          lastName: user.lastName,
-          email: user.email,
-          buyerId: user._id,
-          sellerId: user._id,
-          type: user.type,
-        });
-      }
-    });
-  } catch (error) {
-    console.log(error);
-  }
-});
-app
-  .route("/signup")
-  .get((req, res) => {
-    res.sendFile(__dirname + "/public/signup.html");
-  })
-  .post((req, res) => {
-    // generate an id
-    const buyerId = uniqid("buyer-");
-    const sellerId = uniqid("seller-");
-
-    let user = new User({
-      firstName: req.body.firstName,
-      lastName: req.body.lastName,
-      email: req.body.email,
-      password: req.body.password,
-      buyerId: buyerId,
-      sellerId: sellerId,
-      type: user.type,
-    });
-    user.save(async (err, docs) => {
-      if (err) {
-        console.log("Error: ", err);
-        res.status(500).send("Error registering new user please try again.");
-      } else {
-        res.status(200).send({
-          firstName: docs.firstName,
-          lastName: docs.lastName,
-          email: docs.email,
-          buyerId: docs._id,
-          sellerId: docs._id,
-        });
-      }
-    });
-  });
 
 app.route("/create/customer").post((req, res) => {
   const {
@@ -159,7 +94,7 @@ app.route("/create/customer").post((req, res) => {
     address,
     password,
     idUrl,
-    waterElecBillUrl,
+    waterElecBillUrl
   } = req.body;
   let customer = new Customer({
     fullname: fullname,
@@ -170,7 +105,7 @@ app.route("/create/customer").post((req, res) => {
     address: address,
     password: password,
     idUrl: idUrl,
-    waterElecBillUrl: waterElecBillUrl,
+    waterElecBillUrl: waterElecBillUrl
   });
   customer.save((err, docs) => {
     if (err) {
@@ -182,7 +117,7 @@ app.route("/create/customer").post((req, res) => {
         email: docs.email,
         buyerId: docs._id,
         sellerId: docs._id,
-        type: docs.type,
+        type: docs.type
       });
     }
   });
@@ -203,7 +138,7 @@ app.route("/create/entrepreneur").post((req, res) => {
     waterElecBillUrl,
     socialSecurityEmployerCertUrl,
     certificateOfIncorporationUrl,
-    policeClearanceUrl,
+    policeClearanceUrl
   } = req.body;
   const entrepreneur = new Entrepreneur({
     fullname: fullname,
@@ -220,7 +155,7 @@ app.route("/create/entrepreneur").post((req, res) => {
     waterElecBillUrl: waterElecBillUrl,
     socialSecurityEmployerCertUrl: socialSecurityEmployerCertUrl,
     certificateOfIncorporationUrl: certificateOfIncorporationUrl,
-    policeClearanceUrl: policeClearanceUrl,
+    policeClearanceUrl: policeClearanceUrl
   });
   entrepreneur.save((err, docs) => {
     if (err) {
@@ -229,15 +164,13 @@ app.route("/create/entrepreneur").post((req, res) => {
         .status(500)
         .send("Error registering new entrepreneur please try again.");
     } else {
-      res
-        .status(200)
-        .send({
-          fullname: docs.fullname,
-          email: docs.email,
-          buyerId: docs._id,
-          sellerId: docs._id,
-          type: docs.type,
-        });
+      res.status(200).send({
+        fullname: docs.fullname,
+        email: docs.email,
+        buyerId: docs._id,
+        sellerId: docs._id,
+        type: docs.type
+      });
     }
   });
 });
@@ -262,7 +195,8 @@ app.route("/orders/:id").get((req, res) => {
     .then((docs) => {
       const awaitingDelivery = docs.filter(
         (doc) =>
-          doc.status === "Paid Awaiting Delivery" || doc.status === "Pending"
+          doc.status === "Paid Awaiting Delivery" ||
+          doc.status === "Awaiting Verification"
       );
       console.log("Success: ", awaitingDelivery);
       res.status(200).send(awaitingDelivery);
@@ -299,8 +233,21 @@ app.route("/purchases/buyer/:id").get((req, res) => {
       res.status(500).send("Error fetching purchases");
     });
 });
-app.route("/user-purchases/:id").get((req, res) => {
+app.route("/customer-purchases/:id").get((req, res) => {
   Purchase.find({ buyerId: req.params.id })
+    .populate("productId")
+    .populate("buyerId")
+    .populate("sellerId")
+    .then((docs) => {
+      res.status(200).send(docs);
+    })
+    .catch((err) => {
+      console.log("Error: ", err);
+      res.status(500).send("Error fetching purchases");
+    });
+});
+app.route("/entrepreneur-purchases/:id").get((req, res) => {
+  Purchase.find({ sellerId: req.params.id })
     .populate("productId")
     .populate("buyerId")
     .populate("sellerId")
@@ -328,8 +275,19 @@ app.route("/purchases/buy/:id").get((req, res) => {
               res.status(500);
               console.log("Error: ", err);
             } else {
-              res.status(200).send(docs);
-              console.log("Success: ", product);
+              Payment.findOneAndUpdate(
+                { purchaseId: docs._id },
+                { status: "Paid" },
+                (err, payment) => {
+                  if (err) {
+                    res.status(500);
+                    console.log("Error: ", err);
+                  } else {
+                    res.status(200).send(docs);
+                    console.log("Success: ", product);
+                  }
+                }
+              );
             }
           }
         );
@@ -366,23 +324,32 @@ app.route("/purchases/pay/:id").get((req, res) => {
   Purchase.findOneAndUpdate(
     { _id: req.params.id },
     { status: "Paid Awaiting Delivery" },
-    (err, docs) => {
+    (err, purchase) => {
       if (err) {
         console.log("Error: ", err);
       } else {
-        Product.findOneAndUpdate(
-          { _id: docs.productId },
-          { status: "Paid Awaiting Delivery" },
-          (err, product) => {
-            if (err) {
-              res.status(500);
-              console.log("Error: ", err);
-            } else {
-              res.status(200).send(docs);
-              console.log("Success: ", product);
-            }
+        const payment = new Payment({
+          purchaseId: purchase._id
+        });
+        payment.save((err, payment) => {
+          if (err) {
+            console.log("Error: ", err);
+          } else {
+            Product.findOneAndUpdate(
+              { _id: purchase.productId },
+              { status: "Paid Awaiting Delivery" },
+              (err, product) => {
+                if (err) {
+                  res.status(500);
+                  console.log("Error: ", err);
+                } else {
+                  res.status(200).send(payment);
+                  console.log("Success: ", product);
+                }
+              }
+            );
           }
-        );
+        });
       }
     }
   );
@@ -415,7 +382,9 @@ app.route("/purchases/seller/:id").get((req, res) => {
     .populate("productId")
     .populate("buyerId")
     .then((docs) => {
-      const pending = docs.filter((doc) => doc.status === "Pending");
+      const pending = docs.filter(
+        (doc) => doc.status === "Awaiting Verification"
+      );
       res.status(200).send(pending);
     })
     .catch((err) => {
@@ -433,17 +402,17 @@ app.route("/purchase").post((req, res) => {
       // use productId to update product status
       Product.findOneAndUpdate(
         { _id: req.body.productId },
-        { status: "Payment Pending" },
+        { status: "Awaiting Verification" },
         (err, docs) => {
           if (err) {
             console.log("Error: ", err);
             res.status(500).send("Error updating product status");
           } else {
             console.log("Success: ", docs);
+            res.status(200);
           }
         }
       );
-      res.send({ purchaseId: data.purchaseId });
     }
   });
 });

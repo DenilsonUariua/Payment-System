@@ -33,7 +33,7 @@ const productSchema = mongoose.Schema(
     },
     buyerId: {
       type: mongoose.Schema.Types.ObjectId,
-      ref: "customer",
+      ref: "customer"
     },
     stripePriceId: {
       type: String,
@@ -41,7 +41,13 @@ const productSchema = mongoose.Schema(
     },
     status: {
       type: String,
-      enum: ["Available", "Sold", "Payment Pending"],
+      enum: [
+        "Available",
+        "Sold",
+        "Awaiting Verification",
+        "Payment Pending",
+        "Paid Awaiting Delivery"
+      ],
       default: "Available"
     }
   },

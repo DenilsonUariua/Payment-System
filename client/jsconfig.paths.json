@@ -12,7 +12,8 @@
       "@assets": ["src/assets"],
       "@context": ["src/use-context"],
       "@purchases": ["src/components/purchases"],
-      "@firebaseFolder": ["src/firebase"]
+      "@firebaseFolder": ["src/firebase"],
+      "@checkout": ["src/components/checkout"]
     }
   }
 }

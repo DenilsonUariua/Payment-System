@@ -22,7 +22,9 @@ export default function Deposits() {
             NODE_ENV === "production"
               ? REACT_APP_AUTH_API_URL_PRODUCTION
               : REACT_APP_AUTH_API_URL_DEVELOPMENT
-          }/user-purchases/${user.buyerId}`
+          }/${
+            user.type === "Customer" ? "Customer" : "Entrepreneur"
+          }-purchases/${user.buyerId}`
         )
         .then((res) => {
           setProducts(res.data);

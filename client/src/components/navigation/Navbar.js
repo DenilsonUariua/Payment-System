@@ -15,12 +15,13 @@ import Logo from "../../assets/icon.png";
 import { Link } from "react-router-dom";
 import { UserContext } from "../../use-context/UserContext";
 
-// const authenticatedPages = [
-//   "Dashboard",
-//   "Products",
-//   "Purchases",
-//   "Create-Product",
-// ];
+const authenticatedPagesCustomer = ["Dashboard", "Products", "Purchases"];
+const authenticatedPagesEntrepreneur = [
+  "Dashboard",
+  "Products",
+  "Purchases",
+  "Create-Product"
+];
 const unauthenticatedPages = ["Signin", "Signup"];
 const settingsAuthenticated = ["Dashboard", "Profile", "Account", "Logout"];
 const settingsUnathenticaed = ["Home", "Signin", "Signup"];
@@ -29,20 +30,10 @@ export const Navbar = () => {
   const [anchorElNav, setAnchorElNav] = useState(null);
   const [anchorElUser, setAnchorElUser] = useState(null);
   const { user } = useContext(UserContext);
-  const [authenticatedPages, setAuthenticated] = useState([
-    "Dashboard",
-    "Products",
-    "Purchases",
-  ]);
+  const [showCustomer, setShowCustomer] = useState(false);
   useEffect(() => {
     if (user) {
-      user.type === "Entrepreneur" &&
-        setAuthenticated([
-          "Dashboard",
-          "Products",
-          "Purchases",
-          "Create-Product",
-        ]);
+      user.type === "Customer" && setShowCustomer(true);
     }
   }, [user]);
 
@@ -86,27 +77,35 @@ export const Navbar = () => {
               anchorEl={anchorElNav}
               anchorOrigin={{
                 vertical: "bottom",
-                horizontal: "left",
+                horizontal: "left"
               }}
               keepMounted
               transformOrigin={{
                 vertical: "top",
-                horizontal: "left",
+                horizontal: "left"
               }}
               open={Boolean(anchorElNav)}
               onClose={handleCloseNavMenu}
               sx={{
-                display: { xs: "block", md: "none" },
+                display: { xs: "block", md: "none" }
               }}
             >
               {user !== null
-                ? authenticatedPages.map((page) => (
-                    <MenuItem key={page} onClick={handleCloseNavMenu}>
-                      <Link to={`/${page.toLowerCase()}`}>
-                        <Typography textAlign="center">{page}</Typography>
-                      </Link>
-                    </MenuItem>
-                  ))
+                ? showCustomer
+                  ? authenticatedPagesCustomer.map((page) => (
+                      <MenuItem key={page} onClick={handleCloseNavMenu}>
+                        <Link to={`/${page.toLowerCase()}`}>
+                          <Typography textAlign="center">{page}</Typography>
+                        </Link>
+                      </MenuItem>
+                    ))
+                  : authenticatedPagesEntrepreneur.map((page) => (
+                      <MenuItem key={page} onClick={handleCloseNavMenu}>
+                        <Link to={`/${page.toLowerCase()}`}>
+                          <Typography textAlign="center">{page}</Typography>
+                        </Link>
+                      </MenuItem>
+                    ))
                 : unauthenticatedPages.map((page) => (
                     <MenuItem key={page} onClick={handleCloseNavMenu}>
                       <Link to={`/${page.toLowerCase()}`}>
@@ -118,17 +117,35 @@ export const Navbar = () => {
           </Box>
           <Box sx={{ flexGrow: 1, display: { xs: "none", md: "flex" } }}>
             {user !== null
-              ? authenticatedPages.map((page) => (
-                  <Link to={`/${page.toLowerCase()}`} className="header-links">
-                    <Button
-                      key={page}
-                      onClick={handleCloseNavMenu}
-                      sx={{ my: 2, color: "white", display: "block" }}
+              ? showCustomer
+                ? authenticatedPagesCustomer.map((page) => (
+                    <Link
+                      to={`/${page.toLowerCase()}`}
+                      className="header-links"
                     >
-                      {page}
-                    </Button>
-                  </Link>
-                ))
+                      <Button
+                        key={page}
+                        onClick={handleCloseNavMenu}
+                        sx={{ my: 2, color: "white", display: "block" }}
+                      >
+                        {page}
+                      </Button>
+                    </Link>
+                  ))
+                : authenticatedPagesEntrepreneur.map((page) => (
+                    <Link
+                      to={`/${page.toLowerCase()}`}
+                      className="header-links"
+                    >
+                      <Button
+                        key={page}
+                        onClick={handleCloseNavMenu}
+                        sx={{ my: 2, color: "white", display: "block" }}
+                      >
+                        {page}
+                      </Button>
+                    </Link>
+                  ))
               : unauthenticatedPages.map((page) => (
                   <Link to={`/${page.toLowerCase()}`} className="header-links">
                     <Button
@@ -157,12 +174,12 @@ export const Navbar = () => {
               anchorEl={anchorElUser}
               anchorOrigin={{
                 vertical: "top",
-                horizontal: "right",
+                horizontal: "right"
               }}
               keepMounted
               transformOrigin={{
                 vertical: "top",
-                horizontal: "right",
+                horizontal: "right"
               }}
               open={Boolean(anchorElUser)}
               onClose={handleCloseUserMenu}

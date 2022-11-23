@@ -11,7 +11,7 @@ import List from "@mui/material/List";
 import Divider from "@mui/material/Divider";
 import IconButton from "@mui/material/IconButton";
 import ChevronLeftIcon from "@mui/icons-material/ChevronLeft";
-import { mainListItems } from "./dashboard/listItems";
+import { MainListItems } from "./dashboard/listItems";
 
 const drawerWidth = 240;
 const Drawer = styled(MuiDrawer, {
@@ -105,7 +105,7 @@ export const Customers = () => {
           </Toolbar>
           <Divider />
           <List component="nav">
-            {mainListItems}
+            <MainListItems />
             <Divider sx={{ my: 1 }} />
           </List>
         </Drawer>
@@ -118,31 +118,31 @@ export const Customers = () => {
             overflow: "auto"
           }}
         >
-        <Card title="Customers" style={{ margin: "2%" }}>
-          {data &&
-            data.map((customer) => (
-              <Card.Grid style={gridStyle}>
-                <Card
-                  title={`BUYER: ${customer.buyerId.fullname.toUpperCase()}`}
-                  bordered={false}
-                >
-                  <div
-                    style={{
-                      display: "flex",
-                      flexDirection: "column",
-                      justifyContent: "start",
-                      alignItems: "start"
-                    }}
+          <Card title="Customers" style={{ margin: "2%" }}>
+            {data &&
+              data.map((customer) => (
+                <Card.Grid style={gridStyle}>
+                  <Card
+                    title={`BUYER: ${customer.buyerId.fullname.toUpperCase()}`}
+                    bordered={false}
                   >
-                    <p>Buyer email: {customer.buyerId.email}</p>
-                    <p>Product name: {customer.productId.name}</p>
-                    <p>Product price:{` N$${customer.productId.price}`}</p>
-                    <p>Product status:{` ${customer.productId.status}`}</p>
-                  </div>
-                </Card>
-              </Card.Grid>
-            ))}
-        </Card>
+                    <div
+                      style={{
+                        display: "flex",
+                        flexDirection: "column",
+                        justifyContent: "start",
+                        alignItems: "start"
+                      }}
+                    >
+                      <p>Buyer email: {customer.buyerId.email}</p>
+                      <p>Product name: {customer.productId.name}</p>
+                      <p>Product price:{` N$${customer.productId.price}`}</p>
+                      <p>Product status:{` ${customer.productId.status}`}</p>
+                    </div>
+                  </Card>
+                </Card.Grid>
+              ))}
+          </Card>
         </Box>
       </Box>
     </ThemeProvider>

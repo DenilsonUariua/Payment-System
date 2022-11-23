@@ -8,17 +8,18 @@ import Title from "./Title";
 import axios from "axios";
 import Button from "@mui/material/Button";
 import { UserContext } from "@context";
+import { Link } from "react-router-dom";
 // get api url
 const {
   REACT_APP_AUTH_API_URL_PRODUCTION,
   REACT_APP_AUTH_API_URL_DEVELOPMENT,
-  NODE_ENV,
+  NODE_ENV
 } = process.env;
 
 export default function Orders() {
   const { user } = useContext(UserContext);
   const [loading, setLoading] = useState(true);
-  const [products, setProducts] = useState([]);
+  const [purchases, setPurchases] = useState([]);
   const fetchPurchases = () => {
     user &&
       axios
@@ -27,10 +28,12 @@ export default function Orders() {
             NODE_ENV === "production"
               ? REACT_APP_AUTH_API_URL_PRODUCTION
               : REACT_APP_AUTH_API_URL_DEVELOPMENT
-          }/user-purchases/${user.buyerId}`
+          }/${
+            user.type === "Customer" ? "Customer" : "Entrepreneur"
+          }-purchases/${user.buyerId}`
         )
         .then((res) => {
-          setProducts(res.data);
+          setPurchases(res.data);
           setLoading(false);
         })
         .catch((err) => {
@@ -39,7 +42,7 @@ export default function Orders() {
   };
   useEffect(() => {
     fetchPurchases();
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [user]);
   const handleConfirmation = (purchase) => {
     axios
@@ -60,7 +63,7 @@ export default function Orders() {
   return !loading ? (
     <React.Fragment>
       <Title>Purchases</Title>
-      {products.length > 0 ? (
+      {purchases.length > 0 ? (
         <Table size="small">
           <TableHead>
             <TableRow>
@@ -75,7 +78,7 @@ export default function Orders() {
             </TableRow>
           </TableHead>
           <TableBody>
-            {products.map((row) => (
+            {purchases.map((row) => (
               <TableRow key={row._id}>
                 <TableCell>{`${row.sellerId.fullname} `}</TableCell>
                 <TableCell>{`${row.buyerId.fullname}`}</TableCell>
@@ -86,14 +89,17 @@ export default function Orders() {
                 <TableCell>{`${row.productId.status}`}</TableCell>
                 <TableCell>
                   {row.productId.status === "Paid Awaiting Delivery" ? (
-                    <Button
-                      variant="outlined"
-                      onClick={() => {
-                        handleConfirmation(row);
-                      }}
-                    >
-                      Confirm Delivery
-                    </Button>
+                    <Link to={"/checkout"} state={{ purchase: row }}>
+                      {" "}
+                      <Button
+                        variant="outlined"
+                        onClick={() => {
+                          handleConfirmation(row);
+                        }}
+                      >
+                        Confirm Delivery
+                      </Button>
+                    </Link>
                   ) : (
                     "None"
                   )}

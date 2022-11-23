@@ -13,24 +13,24 @@ const purchaseSchema = mongoose.Schema(
   {
     sellerId: {
       type: mongoose.Schema.Types.ObjectId,
-      ref: "user",
+      ref: "entrepreneur",
       required: true
     },
     buyerId: {
       type: mongoose.Schema.Types.ObjectId,
-      ref: "user",
+      ref: "customer",
       required: true
     },
     status: {
       type: String,
       enum: [
-        "Pending",
+        "Awaiting Verification",
         "Completed",
         "Cancelled",
         "Verified",
         "Paid Awaiting Delivery"
       ],
-      default: "Pending"
+      default: "Awaiting Verification"
     },
     productId: {
       type: mongoose.Schema.Types.ObjectId,
