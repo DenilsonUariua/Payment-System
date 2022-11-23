@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import "./Checkout.css";
-import { Formik } from "formik";
-import axios from "axios";
+import Box from "@mui/material/Box";
+
 import { useLocation } from "react-router-dom";
 
 const { REACT_APP_PAYMENTS_API_URL } = process.env;
@@ -12,32 +12,41 @@ const ProductDisplay = () => {
 
   console.log("purchase", purchase);
   return (
-    <section className="section">
-      <div className="product">
-        <img
-          className="image"
-          src="https://i.imgur.com/EHyR2nP.png"
-          alt="The cover of Stubborn Attachments"
-        />
-        <div className="description">
-          <h3 className="header3">Stubborn Attachments</h3>
-          <h5 className="header5">$20.00</h5>
+    <Box
+      sx={{
+        display: "flex",
+        height: "80vh",
+        justifyContent: "center",
+        alignItems: "center"
+      }}
+    >
+      <section className="section">
+        <div className="product">
+          <img
+            className="image"
+            src={purchase.productId.image}
+            alt="The cover of Stubborn Attachments"
+          />
+          <div className="description">
+            <h3 className="header3">{purchase.productId.name}</h3>
+            <h5 className="header5">N${purchase.productId.price}</h5>
+          </div>
         </div>
-      </div>
-      <form
-        action={`${REACT_APP_PAYMENTS_API_URL}/create-checkout-session`}
-        method="POST"
-      >
-        <input
-          type="hidden"
-          name="priceId"
-          value={purchase.productId.stripePriceId}
-        />
-        <button className="button" type="submit">
-          Checkout
-        </button>
-      </form>
-    </section>
+        <form
+          action={`${REACT_APP_PAYMENTS_API_URL}/create-checkout-session`}
+          method="POST"
+        >
+          <input
+            type="hidden"
+            name="priceId"
+            value={purchase.productId.stripePriceId}
+          />
+          <button className="button" type="submit">
+            Checkout
+          </button>
+        </form>
+      </section>
+    </Box>
   );
 };
 

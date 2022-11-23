@@ -11,11 +11,12 @@
   -moz-osx-font-smoothing: grayscale;
 }
 .section {
+  padding: 3rem 2rem;
   background: #ffffff;
   display: flex;
   flex-direction: column;
   width: 400px;
-  height: 112px;
+  height: 412px;
   border-radius: 6px;
   justify-content: space-between;
 }
@@ -45,8 +46,8 @@
 .image {
   border-radius: 6px;
   margin: 10px;
-  width: 54px;
-  height: 57px;
+  width: 154px;
+  height: 157px;
 }
 .header3,
 .header5 {

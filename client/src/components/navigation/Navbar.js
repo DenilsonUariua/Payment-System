@@ -23,7 +23,7 @@ const authenticatedPagesEntrepreneur = [
   "Create-Product"
 ];
 const unauthenticatedPages = ["Signin", "Signup"];
-const settingsAuthenticated = ["Dashboard", "Profile", "Account", "Logout"];
+const settingsAuthenticated = ["Dashboard", "Logout"];
 const settingsUnathenticaed = ["Home", "Signin", "Signup"];
 
 export const Navbar = () => {
