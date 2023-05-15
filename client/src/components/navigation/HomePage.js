@@ -45,7 +45,7 @@ export function HomePage() {
       </Link>
 
       <Typography variant="body2" color="inherit" sx={{ mt: 2 }}>
-        Payment made easier and safer with Kanry
+        Payment made easier and safer with Us
       </Typography>
     </Layout>
   );

@@ -28,7 +28,7 @@ function Copyright(props) {
     >
       {"Copyright © "}
       <Link to={"/"} color="inherit">
-        Kanry Payment
+        Payment
       </Link>{" "}
       {new Date().getFullYear()}
       {"."}
