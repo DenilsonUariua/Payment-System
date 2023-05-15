@@ -1,4 +1,4 @@
-#Payment-System
+# Payment-System
 
 This is a payment system for users. It is a web application that allows payment online. It also allows the users to manage their fees.
 
