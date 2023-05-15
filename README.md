@@ -1,6 +1,6 @@
-# Unam-Payment-System
+#Payment-System
 
-This is a payment system for the University of Namibia. It is a web application that allows students to pay their fees online. It also allows the university to manage the students and their fees.
+This is a payment system for users. It is a web application that allows payment online. It also allows the users to manage their fees.
 
 ## Installation
 To install this application, you need to have the following installed on your machine:
